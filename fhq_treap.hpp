@@ -1,6 +1,11 @@
 #ifndef FHQ_TREAP_HPP
 #define FHQ_TREAP_HPP //C++ Header fhq_treap.hpp
 
+#include<cstdlib>
+#include<memory>
+#include<utility>
+#include<functional>
+
 #if __cplusplus>=201103L
 #include<random>
 #endif
@@ -12,7 +17,7 @@ namespace oitl
 	#ifdef nullptr
 		#undef nullptr
 	#endif
-	#define nullptr ((void*)0)
+	#define nullptr NULL
 #endif
 
 template<typename _Tp,typename _Cmp=std::less<_Tp>,typename _Alloc=std::allocator<_Tp> >
