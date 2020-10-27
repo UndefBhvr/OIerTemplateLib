@@ -66,6 +66,7 @@ class treap:_Cmp
 
         std::pair<iterator,bool> insert(const _Tp&);
         bool erase(const _Tp&);
+		void clear();
         iterator begin()const;
         iterator end()const;
         iterator find(const _Tp&)const;
@@ -363,6 +364,13 @@ treap<_Tp,_Cmp,_Alloc>::erase(const _Tp& Value)
     root=merge(ptr1,ptr3);
     __delete_node(ptr2);
     return true;
+}
+
+template<typename _Tp,typename _Cmp,typename _Alloc>
+void
+treap<_Tp,_Cmp,_Alloc>::clear()
+{
+    destroy_inner_nodes(root);
 }
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
