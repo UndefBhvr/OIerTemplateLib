@@ -19,6 +19,16 @@ template<typename _Tp,typename _Cmp=std::less<_Tp>,typename _Alloc=std::allocato
 class
 pairing_heap:_Cmp
 {
+	
+    public:
+		typedef _Tp value_type;
+		typedef _Cmp cmp_type;
+		typedef _Alloc alloc_type;
+		typedef size_t size_type;
+	#if __cplusplus>=201103L
+        typedef typename std::allocator_traits<_Alloc> alloc_traits_type;
+	#endif
+
     private:
         struct Node;
 
@@ -31,12 +41,13 @@ pairing_heap:_Cmp
         Node* __pop();
         void erase_all_node(Node *ptr);
 
-        typename _Alloc::template rebind<Node>::other __alloc;
+        typedef typename _Alloc::template rebind<Node>::other node_alloc_type;
+		node_alloc_type __alloc;
 	#if __cplusplus>=201103L
-        typedef typename std::allocator_traits<_Alloc>::template rebind_traits<Node> alloc_traits_type;
+        typedef typename alloc_traits_type::template rebind_traits<Node> node_alloc_traits_type;
 	#endif
 
-    public:
+	public:
         struct iterator;
         ~pairing_heap();
         iterator push(const _Tp&);
@@ -67,8 +78,8 @@ pairing_heap<_Tp,_Cmp,_Alloc>::Node*
 pairing_heap<_Tp,_Cmp,_Alloc>::__get_node(_Tp value)
 {
 #if __cplusplus>=201103L
-    Node *ptr=alloc_traits_type::allocate(__alloc,1);
-    alloc_traits_type::construct(__alloc,ptr,value);
+    Node *ptr=node_alloc_traits_type::allocate(__alloc,1);
+    node_alloc_traits_type::construct(__alloc,ptr,value);
 #else
 	Node *ptr=__alloc.allocate(1);
 	__alloc.construct(ptr,value);
@@ -81,8 +92,8 @@ void
 pairing_heap<_Tp,_Cmp,_Alloc>::__delete_node(Node *ptr)
 {
 #if __cplusplus>=201103L
-    alloc_traits_type::destroy(__alloc,ptr);
-    alloc_traits_type::deallocate(__alloc,ptr,1);
+    node_alloc_traits_type::destroy(__alloc,ptr);
+    node_alloc_traits_type::deallocate(__alloc,ptr,1);
 #else
 	__alloc.destroy(ptr);
 	__alloc.deallocate(ptr,1);
@@ -100,7 +111,11 @@ pairing_heap<_Tp,_Cmp,_Alloc>::iterator
     public:
 		iterator():__real_node(nullptr){}
         iterator(const iterator& other_iter):__real_node(other_iter.__real_node) {}
-		iterator &operator=(const iterator& other_iter){__real_node=other_iter.__real_node;}
+		iterator &operator=(const iterator& other_iter)
+		{
+			__real_node=other_iter.__real_node;
+			return *this;
+		}
 
         _Tp &operator*()const {return __real_node->value;}
         operator bool()const {return __real_node!=nullptr;}
