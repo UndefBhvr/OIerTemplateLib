@@ -231,4 +231,4 @@ leftist_heap<_Tp,_Cmp,_Alloc>::empty()const
 
 } //namespace oitl
 
-#endif
+#endif //C++ Header leftist_heap.hpp
