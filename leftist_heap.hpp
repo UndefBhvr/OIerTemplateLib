@@ -126,14 +126,14 @@ typename
 leftist_heap<_Tp,_Cmp,_Alloc>::Node*
 leftist_heap<_Tp,_Cmp,_Alloc>::merge(Node* first_heap,Node* second_heap)
 {
-    if(first_heap==NULL)return second_heap;
-    if(second_heap==NULL)return first_heap;
+    if(first_heap==nullptr)return second_heap;
+    if(second_heap==nullptr)return first_heap;
     if(_Cmp::operator()(second_heap->val,first_heap->val))
 	{
 		std::swap(first_heap,second_heap);
 	}
     second_heap->rc=merge(first_heap,second_heap->rc);
-    if(second_heap->lc==NULL||second_heap->lc->npl<second_heap->rc->npl)
+    if(second_heap->lc==nullptr||second_heap->lc->npl<second_heap->rc->npl)
 	{
 		std::swap(second_heap->lc,second_heap->rc);
 	}
@@ -209,7 +209,7 @@ leftist_heap<_Tp,_Cmp,_Alloc>::join(leftist_heap<_Tp,_Cmp,_Alloc>& Other_heap)
 {
     _root=merge(Other_heap._root,_root);
     s+=Other_heap.s;
-    Other_heap._root=NULL;
+    Other_heap._root=nullptr;
     Other_heap.s=0;
     return iterator(_root);
 }
@@ -226,7 +226,7 @@ template<typename _Tp,typename _Cmp,typename _Alloc>
 bool
 leftist_heap<_Tp,_Cmp,_Alloc>::empty()const
 {
-    return _root==NULL;
+    return _root==nullptr;
 }
 
 } //namespace oitl
