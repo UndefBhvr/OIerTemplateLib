@@ -41,11 +41,16 @@ pairing_heap:_Cmp
         Node* __pop();
         void erase_all_node(Node *ptr);
 
-        typedef typename _Alloc::template rebind<Node>::other node_alloc_type;
-		node_alloc_type __alloc;
 	#if __cplusplus>=201103L
         typedef typename alloc_traits_type::template rebind_traits<Node> node_alloc_traits_type;
 	#endif
+	#if __cplusplus<201703L
+		typedef typename _Alloc::template rebind<Node>::other node_alloc_type;
+    #else
+        typedef typename node_alloc_traits_type::allocator_type node_alloc_type;
+    #endif
+	
+		node_alloc_type __alloc;
 
 	public:
         struct iterator;

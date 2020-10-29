@@ -14,14 +14,14 @@ namespace oitl
 	#define nullptr NULL
 #endif
 
-/************************************************
+/**
  * This class hasn't been finished
  * modify() is unavailable
  * Firstly it's O(n), almost useless
  * Secondly what I write is wrong so I delete it
  * 
  * TODO: Finish modify()
-************************************************/
+ */
 
 template<typename _Tp,typename _Cmp=std::less<_Tp>,typename _Alloc=std::allocator<_Tp> >
 class leftist_heap:_Cmp
@@ -32,10 +32,14 @@ class leftist_heap:_Cmp
         size_t s;
         Node* merge(Node*,Node*);
 
-		typedef typename _Alloc::template rebind<Node>::other _node_alloc_type;
 	#if __cplusplus>=201103L
 		typedef typename std::allocator_traits<_Alloc>::template rebind_traits<Node> _node_alloc_traits_type;
 	#endif
+	#if __cplusplus<201703L
+		typedef typename _Alloc::template rebind<Node>::other _node_alloc_type;
+    #else
+        typedef typename _node_alloc_traits_type::allocator_type _node_alloc_type;
+    #endif
 
 		_node_alloc_type _node_allocator;
 		inline Node *__get_new_node(_Tp);
