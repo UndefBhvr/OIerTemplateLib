@@ -14,14 +14,14 @@ namespace oitl
 	#define nullptr NULL
 #endif
 
-/************************************************
+/**
  * This class hasn't been finished
  * modify() is unavailable
  * Firstly it's O(n), almost useless
  * Secondly what I write is wrong so I delete it
  * 
  * TODO: Finish modify()
-************************************************/
+ */
 
 template<typename _Tp,typename _Cmp=std::less<_Tp>,typename _Alloc=std::allocator<_Tp> >
 class leftist_heap:_Cmp
@@ -32,10 +32,14 @@ class leftist_heap:_Cmp
         size_t s;
         Node* merge(Node*,Node*);
 
-		typedef typename _Alloc::template rebind<Node>::other _node_alloc_type;
 	#if __cplusplus>=201103L
 		typedef typename std::allocator_traits<_Alloc>::template rebind_traits<Node> _node_alloc_traits_type;
 	#endif
+	#if __cplusplus<201703L
+		typedef typename _Alloc::template rebind<Node>::other _node_alloc_type;
+    #else
+        typedef typename _node_alloc_traits_type::allocator_type _node_alloc_type;
+    #endif
 
 		_node_alloc_type _node_allocator;
 		inline Node *__get_new_node(_Tp);
@@ -126,14 +130,14 @@ typename
 leftist_heap<_Tp,_Cmp,_Alloc>::Node*
 leftist_heap<_Tp,_Cmp,_Alloc>::merge(Node* first_heap,Node* second_heap)
 {
-    if(first_heap==NULL)return second_heap;
-    if(second_heap==NULL)return first_heap;
+    if(first_heap==nullptr)return second_heap;
+    if(second_heap==nullptr)return first_heap;
     if(_Cmp::operator()(second_heap->val,first_heap->val))
 	{
 		std::swap(first_heap,second_heap);
 	}
     second_heap->rc=merge(first_heap,second_heap->rc);
-    if(second_heap->lc==NULL||second_heap->lc->npl<second_heap->rc->npl)
+    if(second_heap->lc==nullptr||second_heap->lc->npl<second_heap->rc->npl)
 	{
 		std::swap(second_heap->lc,second_heap->rc);
 	}
@@ -209,7 +213,7 @@ leftist_heap<_Tp,_Cmp,_Alloc>::join(leftist_heap<_Tp,_Cmp,_Alloc>& Other_heap)
 {
     _root=merge(Other_heap._root,_root);
     s+=Other_heap.s;
-    Other_heap._root=NULL;
+    Other_heap._root=nullptr;
     Other_heap.s=0;
     return iterator(_root);
 }
@@ -226,8 +230,12 @@ template<typename _Tp,typename _Cmp,typename _Alloc>
 bool
 leftist_heap<_Tp,_Cmp,_Alloc>::empty()const
 {
-    return _root==NULL;
+    return _root==nullptr;
 }
+
+#if __cplusplus<201103L
+	#undef nullptr
+#endif
 
 } //namespace oitl
 

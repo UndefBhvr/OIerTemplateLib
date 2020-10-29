@@ -20,7 +20,7 @@ namespace oitl
 	#define nullptr NULL
 #endif
 
-/***************************************************
+/**
  * This class can be used normally in some ways
  * But it will be better soon
  * 
@@ -28,8 +28,8 @@ namespace oitl
  * const_iterator
  * reverse_iterator
  * begin() in O(1) time
- * 
-***************************************************/
+ * makereturn const reference
+ */
 
 template<typename _Tp,typename _Cmp=std::less<_Tp>,typename _Alloc=std::allocator<_Tp> >
 class treap:_Cmp
@@ -58,10 +58,14 @@ class treap:_Cmp
 		inline static unsigned long long get_pri();
 		void destroy_inner_nodes(Node*);
 
-        typedef typename _Alloc::template rebind<Node>::other _node_alloc_type;
 	#if __cplusplus>=201103L
         typedef typename alloc_traits_type::template rebind_traits<Node> _node_alloc_traits_type;
 	#endif
+	#if __cplusplus<201703L
+		typedef typename _Alloc::template rebind<Node>::other _node_alloc_type;
+    #else
+        typedef typename _node_alloc_traits_type::allocator_type _node_alloc_type;
+    #endif
 
         _node_alloc_type _node_allocator;
     public:
@@ -281,6 +285,7 @@ struct treap<_Tp,_Cmp,_Alloc>::iterator
                     return *this;
                 }
             }
+			return *this;
         }
         iterator operator++(int)
         {
@@ -305,6 +310,7 @@ struct treap<_Tp,_Cmp,_Alloc>::iterator
                     return *this;
                 }
             }
+			return *this;
         }
         iterator operator--(int)
         {
