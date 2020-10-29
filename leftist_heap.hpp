@@ -233,6 +233,10 @@ leftist_heap<_Tp,_Cmp,_Alloc>::empty()const
     return _root==nullptr;
 }
 
+#if __cplusplus<201103L
+	#undef nullptr
+#endif
+
 } //namespace oitl
 
 #endif //C++ Header leftist_heap.hpp
