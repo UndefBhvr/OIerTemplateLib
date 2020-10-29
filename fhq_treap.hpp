@@ -20,6 +20,17 @@ namespace oitl
 	#define nullptr NULL
 #endif
 
+/**
+ * This class can be used normally in some ways
+ * But it will be better soon
+ * 
+ * TODO: 
+ * const_iterator
+ * reverse_iterator
+ * begin() in O(1) time
+ * makereturn const reference
+ */
+
 template<typename _Tp,typename _Cmp=std::less<_Tp>,typename _Alloc=std::allocator<_Tp> >
 class treap:_Cmp
 {
