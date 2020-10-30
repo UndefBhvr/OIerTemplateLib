@@ -27,6 +27,7 @@ template<typename _Tp,typename _Cmp=std::less<_Tp>,typename _Alloc=std::allocato
 class leftist_heap:_Cmp
 {
 	private:
+
         struct Node;
         Node* _root;
         size_t s;
@@ -34,11 +35,9 @@ class leftist_heap:_Cmp
 
 	#if __cplusplus>=201103L
 		typedef typename std::allocator_traits<_Alloc>::template rebind_traits<Node> _node_alloc_traits_type;
-	#endif
-	#if __cplusplus<201703L
-		typedef typename _Alloc::template rebind<Node>::other _node_alloc_type;
-    #else
         typedef typename _node_alloc_traits_type::allocator_type _node_alloc_type;
+    #else
+		typedef typename _Alloc::template rebind<Node>::other _node_alloc_type;
     #endif
 
 		_node_alloc_type _node_allocator;
@@ -46,6 +45,7 @@ class leftist_heap:_Cmp
 		inline void __delete_node(Node*);
 
     public:
+
 		typedef _Tp value_type;
 		typedef _Cmp cmp_type;
 		typedef size_t size_type;
@@ -149,9 +149,11 @@ template<typename _Tp,typename _Cmp,typename _Alloc>
 struct leftist_heap<_Tp,_Cmp,_Alloc>::iterator
 {
     private:
+
         Node *real_node;
 		friend class leftist_heap;
         iterator(Node* ptr):real_node(ptr) {}
+        
     public:
 		iterator():real_node(nullptr){}
 

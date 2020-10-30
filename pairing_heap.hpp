@@ -21,6 +21,7 @@ pairing_heap:_Cmp
 {
 	
     public:
+
 		typedef _Tp value_type;
 		typedef _Cmp cmp_type;
 		typedef _Alloc alloc_type;
@@ -30,6 +31,7 @@ pairing_heap:_Cmp
 	#endif
 
     private:
+
         struct Node;
 
 		inline Node *__get_node(_Tp);
@@ -43,16 +45,15 @@ pairing_heap:_Cmp
 
 	#if __cplusplus>=201103L
         typedef typename alloc_traits_type::template rebind_traits<Node> node_alloc_traits_type;
-	#endif
-	#if __cplusplus<201703L
-		typedef typename _Alloc::template rebind<Node>::other node_alloc_type;
-    #else
         typedef typename node_alloc_traits_type::allocator_type node_alloc_type;
+    #else
+		typedef typename _Alloc::template rebind<Node>::other node_alloc_type;
     #endif
 	
 		node_alloc_type __alloc;
 
 	public:
+
         struct iterator;
         ~pairing_heap();
         iterator push(const _Tp&);
@@ -110,12 +111,16 @@ struct
 pairing_heap<_Tp,_Cmp,_Alloc>::iterator
 {
     private:
+
         Node* __real_node;
         iterator(Node* ptr):__real_node(ptr) {}
         friend class pairing_heap;
+
     public:
+
 		iterator():__real_node(nullptr){}
         iterator(const iterator& other_iter):__real_node(other_iter.__real_node) {}
+        
 		iterator &operator=(const iterator& other_iter)
 		{
 			__real_node=other_iter.__real_node;

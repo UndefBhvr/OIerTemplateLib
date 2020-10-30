@@ -31,6 +31,7 @@ class LCT_splay
 		void __delete_node(Node*);
 
 	public:
+
 		friend class link_cut_tree<_Tp,_Func,_Alloc>;
 		typedef _Tp value_type;
 		typedef _Func func_type;
@@ -40,13 +41,12 @@ class LCT_splay
 	#endif
 
 	private:
+
 	#if __cplusplus>=201103L
         typedef typename alloc_traits_type::template rebind_traits<Node> node_alloc_traits_type;
-	#endif
-    #if __cplusplus<201703L
-		typedef typename _Alloc::template rebind<Node>::other node_alloc_type;
-    #else
         typedef typename node_alloc_traits_type::allocator_type node_alloc_type;
+    #else
+		typedef typename _Alloc::template rebind<Node>::other node_alloc_type;
     #endif
 
 		node_alloc_type __alloc;
@@ -78,16 +78,17 @@ struct LCT_splay<_Tp,_Func,_Alloc>::Node:_Func
         ch[1]=nullptr;
 	}
 
-    void reverse();
-    void push_down();
+    inline void reverse();
+    inline void push_down();
     void push_all();
-    void maintain();
-    bool is_root();
-    void rotate();
+    inline void maintain();
+    inline bool is_root();
+    inline void rotate();
     void splay();
 };
 
 template<typename _Tp,typename _Func,typename _Alloc>
+inline
 void
 LCT_splay<_Tp,_Func,_Alloc>::Node::reverse()
 {
@@ -95,6 +96,7 @@ LCT_splay<_Tp,_Func,_Alloc>::Node::reverse()
 }
 
 template<typename _Tp,typename _Func,typename _Alloc>
+inline
 void
 LCT_splay<_Tp,_Func,_Alloc>::Node::push_down()
 {
@@ -114,6 +116,7 @@ LCT_splay<_Tp,_Func,_Alloc>::Node::push_all()
 }
 
 template<typename _Tp,typename _Func,typename _Alloc>
+inline
 void
 LCT_splay<_Tp,_Func,_Alloc>::Node::maintain()
 {
@@ -123,6 +126,7 @@ LCT_splay<_Tp,_Func,_Alloc>::Node::maintain()
 }
 
 template<typename _Tp,typename _Func,typename _Alloc>
+inline
 bool
 LCT_splay<_Tp,_Func,_Alloc>::Node::is_root()
 {
@@ -130,6 +134,7 @@ LCT_splay<_Tp,_Func,_Alloc>::Node::is_root()
 }
 
 template<typename _Tp,typename _Func,typename _Alloc>
+inline
 void
 LCT_splay<_Tp,_Func,_Alloc>::Node::rotate()
 {
@@ -200,6 +205,7 @@ template<typename _Tp,typename _Func,typename _Alloc=std::allocator<_Tp> >
 class link_cut_tree:private __tree_base::LCT_splay<_Tp,_Func,_Alloc>
 {
     private:
+
 		typedef typename __tree_base::LCT_splay<_Tp,_Func,_Alloc> splay_base;
     	typedef typename splay_base::Node Node;
 
@@ -207,7 +213,9 @@ class link_cut_tree:private __tree_base::LCT_splay<_Tp,_Func,_Alloc>
         void make_root(Node*);
         Node* find_root(Node*);
         bool split(Node*,Node*);
+
     public:
+
 		typedef typename splay_base::value_type value_type;
 		typedef typename splay_base::func_type func_type;
 		typedef typename splay_base::alloc_type allocator_type;
@@ -229,10 +237,13 @@ template<typename _Tp,typename _Func,typename _Alloc>
 struct link_cut_tree<_Tp,_Func,_Alloc>::iterator
 {
     private:
+
         Node* ptr;
         friend class link_cut_tree;
         iterator(Node* p):ptr(p) {}
+        
     public:
+
 		iterator():ptr(nullptr) {}
         iterator(const iterator& Iterator):
             ptr(Iterator.ptr)
