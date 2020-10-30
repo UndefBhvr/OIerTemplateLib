@@ -1,5 +1,5 @@
-#ifndef FHQ_TREAP_HPP
-#define FHQ_TREAP_HPP //C++ Header fhq_treap.hpp
+#ifndef TREAP_HPP
+#define TREAP_HPP //C++ Header treap.hpp
 
 #include<cstdlib>
 #include<memory>
@@ -25,16 +25,15 @@ namespace oitl
  * But it will be better soon
  * 
  * TODO: 
- * const_iterator
  * reverse_iterator
  * begin() in O(1) time
- * makereturn const reference
  */
 
 template<typename _Tp,typename _Cmp=std::less<_Tp>,typename _Alloc=std::allocator<_Tp> >
 class treap:_Cmp
 {
     public:
+
         typedef _Tp Value_type;
         typedef _Cmp Comparator_type;
         typedef size_t size_type;
@@ -42,8 +41,13 @@ class treap:_Cmp
 	#if __cplusplus>=201103L
         typedef typename std::allocator_traits<_Alloc> alloc_traits_type;
 	#endif
+
     private:
+
         struct Node;
+
+		struct _const_iterator;
+
         Node *end_node;
         Node *&root;
 
@@ -60,17 +64,17 @@ class treap:_Cmp
 
 	#if __cplusplus>=201103L
         typedef typename alloc_traits_type::template rebind_traits<Node> _node_alloc_traits_type;
-	#endif
-	#if __cplusplus<201703L
-		typedef typename _Alloc::template rebind<Node>::other _node_alloc_type;
-    #else
         typedef typename _node_alloc_traits_type::allocator_type _node_alloc_type;
-    #endif
+    #else
+		typedef typename _Alloc::template rebind<Node>::other _node_alloc_type;
+	#endif
 
         _node_alloc_type _node_allocator;
+
     public:
 
-        struct iterator;
+        typedef _const_iterator const_iterator;
+		typedef _const_iterator iterator;
 
         treap():
             end_node(new Node),
@@ -79,15 +83,15 @@ class treap:_Cmp
 
 		~treap();
 
-        std::pair<iterator,bool> insert(const _Tp&);
+        std::pair<const_iterator,bool> insert(const _Tp&);
         bool erase(const _Tp&);
 		void clear();
-        iterator begin()const;
-        iterator end()const;
-        iterator find(const _Tp&)const;
-        iterator lower_bound(const _Tp&)const;
-        iterator upper_bound(const _Tp&)const;
-        iterator find_by_order(const size_type&)const;
+        const_iterator begin()const;
+        const_iterator end()const;
+        const_iterator find(const _Tp&)const;
+        const_iterator lower_bound(const _Tp&)const;
+        const_iterator upper_bound(const _Tp&)const;
+        const_iterator find_by_order(const size_type&)const;
         size_type order_of_key(const _Tp&)const;
         size_type size()const;
 };
@@ -252,23 +256,31 @@ treap<_Tp,_Cmp,_Alloc>::split_val_equal(Node *subtree_root,const _Tp &val,Node *
 }
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
-struct treap<_Tp,_Cmp,_Alloc>::iterator
+struct treap<_Tp,_Cmp,_Alloc>::_const_iterator
 {
+		friend class treap<_Tp,_Cmp,_Alloc>;
+
     private:
-        Node *ptr;
-    public:
-        iterator(){}
-        iterator(Node *ptr):
+
+        const Node *ptr;
+
+        _const_iterator(Node *ptr):
             ptr(ptr)
         {}
-        iterator(const iterator& Iter):
+
+    public:
+
+        _const_iterator(){}
+        _const_iterator(const _const_iterator& Iter):
             ptr(Iter.ptr)
         {}
-        _Tp &operator*()const
+
+        const _Tp &operator*()const
         {
             return ptr->value;
         }
-        iterator &operator++()
+
+        _const_iterator &operator++()
         {
             if(ptr->rc!=nullptr)
             {
@@ -287,13 +299,13 @@ struct treap<_Tp,_Cmp,_Alloc>::iterator
             }
 			return *this;
         }
-        iterator operator++(int)
+        _const_iterator operator++(int)
         {
             Node *ptr0=ptr;
             ++*this;
             return iterator(ptr0);
         }
-        iterator &operator--()
+        _const_iterator &operator--()
         {
             if(ptr->lc!=nullptr)
             {
@@ -312,11 +324,11 @@ struct treap<_Tp,_Cmp,_Alloc>::iterator
             }
 			return *this;
         }
-        iterator operator--(int)
+        _const_iterator operator--(int)
         {
             Node *ptr0=ptr;
             --*this;
-            return iterator(ptr0);
+            return const_iterator(ptr0);
         }
 };
 
@@ -350,7 +362,7 @@ treap<_Tp,_Cmp,_Alloc>::~treap()
 }
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
-std::pair<typename treap<_Tp,_Cmp,_Alloc>::iterator,bool>
+std::pair<typename treap<_Tp,_Cmp,_Alloc>::const_iterator,bool>
 treap<_Tp,_Cmp,_Alloc>::insert(const _Tp& Value)
 {
     Node *ptr1,*ptr2,*ptr3;
@@ -359,11 +371,11 @@ treap<_Tp,_Cmp,_Alloc>::insert(const _Tp& Value)
     if(ptr2!=nullptr)
     {
         root=merge(merge(ptr1,ptr2),ptr3);
-        return std::make_pair(iterator(end_node),false);
+        return std::make_pair(const_iterator(end_node),false);
     }
     Node *new_ptr=__get_new_node(Value);
     root=merge(merge(ptr1,new_ptr),ptr3);
-    return std::make_pair(iterator(new_ptr),true);
+    return std::make_pair(const_iterator(new_ptr),true);
 }
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
@@ -391,24 +403,24 @@ treap<_Tp,_Cmp,_Alloc>::clear()
 }
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
-typename treap<_Tp,_Cmp,_Alloc>::iterator
+typename treap<_Tp,_Cmp,_Alloc>::const_iterator
 treap<_Tp,_Cmp,_Alloc>::begin()const
 {
-    if(root==nullptr)return iterator(end_node);
+    if(root==nullptr)return const_iterator(end_node);
     Node *now=root;
     while(now->lc!=nullptr)now=now->lc;
-    return iterator(now);
+    return const_iterator(now);
 }
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
-typename treap<_Tp,_Cmp,_Alloc>::iterator
+typename treap<_Tp,_Cmp,_Alloc>::const_iterator
 treap<_Tp,_Cmp,_Alloc>::end()const
 {
-    return iterator(end_node);
+    return const_iterator(end_node);
 }
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
-typename treap<_Tp,_Cmp,_Alloc>::iterator
+typename treap<_Tp,_Cmp,_Alloc>::const_iterator
 treap<_Tp,_Cmp,_Alloc>::find(const _Tp& Value)const
 {
     Node *now=root;
@@ -416,13 +428,13 @@ treap<_Tp,_Cmp,_Alloc>::find(const _Tp& Value)const
     {
         if(_Cmp::operator()(Value,now->value))now=now->lc;
         else if(_Cmp::operator()(now->valueue,Value))now=now->rc;
-        else return iterator(now);
+        else return const_iterator(now);
     }
-    return iterator(end_node);
+    return const_iterator(end_node);
 }
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
-typename treap<_Tp,_Cmp,_Alloc>::iterator
+typename treap<_Tp,_Cmp,_Alloc>::const_iterator
 treap<_Tp,_Cmp,_Alloc>::lower_bound(const _Tp& Value)const
 {
     Node *now=root,*ans=nullptr;
@@ -439,11 +451,11 @@ treap<_Tp,_Cmp,_Alloc>::lower_bound(const _Tp& Value)const
         }
     }
     if(ans==nullptr)ans=end_node;
-    return iterator(ans);
+    return const_iterator(ans);
 }
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
-typename treap<_Tp,_Cmp,_Alloc>::iterator
+typename treap<_Tp,_Cmp,_Alloc>::const_iterator
 treap<_Tp,_Cmp,_Alloc>::upper_bound(const _Tp& Value)const
 {
     Node *now=root,*ans=nullptr;
@@ -460,11 +472,11 @@ treap<_Tp,_Cmp,_Alloc>::upper_bound(const _Tp& Value)const
         }
     }
     if(ans==nullptr)ans=end_node;
-    return iterator(ans);
+    return const_iterator(ans);
 }
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
-typename treap<_Tp,_Cmp,_Alloc>::iterator
+typename treap<_Tp,_Cmp,_Alloc>::const_iterator
 treap<_Tp,_Cmp,_Alloc>::find_by_order(const size_type& Order)const
 {
     size_type rest_order=Order;
@@ -482,9 +494,9 @@ treap<_Tp,_Cmp,_Alloc>::find_by_order(const size_type& Order)const
             rest_order-=ls+1;
             ans=ans->rc;
         }
-        else return iterator(ans);
+        else return const_iterator(ans);
     }
-    return iterator(ans);
+    return const_iterator(ans);
 }
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
@@ -524,4 +536,4 @@ treap<_Tp,_Cmp,_Alloc>::size()const
 
 } //namespace oitl
 
-#endif //C++ Header fhq_treap.hpp
+#endif //C++ Header treap.hpp
