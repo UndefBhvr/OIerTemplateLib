@@ -58,7 +58,7 @@
 
 ### 3.leftist_heap
 
-支持std::priority_queue的（几乎）全部操作，同时支持快速合并。
+支持std::priority_queue的（几乎）全部操作，同时支持~~快速~~减小关键字和合并。
 
 ### 4.link_cut_tree
 
