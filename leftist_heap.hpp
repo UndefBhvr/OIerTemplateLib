@@ -15,12 +15,9 @@ namespace oitl
 #endif
 
 /**
- * This class hasn't been finished
- * modify() is unavailable
- * Firstly it's O(n), almost useless
- * Secondly what I write is wrong so I delete it
- * 
- * TODO: Finish modify()
+ * TODO:
+ * const_iterator
+ * erase a node with an iterator
  */
 
 template<typename _Tp,typename _Cmp=std::less<_Tp>,typename _Alloc=std::allocator<_Tp> >
@@ -29,9 +26,10 @@ class leftist_heap:_Cmp
 	private:
 
         struct Node;
-        Node* _root;
+        Node *_root;
         size_t s;
-        Node* merge(Node*,Node*);
+        Node *merge(Node*,Node*);
+        void __erase_inner_node(Node*);
 
 	#if __cplusplus>=201103L
 		typedef typename std::allocator_traits<_Alloc>::template rebind_traits<Node> _node_alloc_traits_type;
@@ -78,7 +76,7 @@ struct leftist_heap<_Tp,_Cmp,_Alloc>::Node
         npl(0)
 	{}
 
-	void maintain()
+	bool maintain()
 	{
 		size_t ldp=0,rdp=0;
 		if(lc!=nullptr)
@@ -91,8 +89,14 @@ struct leftist_heap<_Tp,_Cmp,_Alloc>::Node
 			rdp=rc->npl+1;
 			rc->ftr=this;
 		}
-		npl=std::min(ldp,rdp);
-		if(ldp<rdp)std::swap(lc,rc);
+        size_type new_npl=std::min(ldp,rdp);
+		if(new_npl!=npl)
+        {
+            npl=new_npl;
+		    if(ldp<rdp)std::swap(lc,rc);
+            return false;
+        }
+        return false;
 	}
 };
 
@@ -146,6 +150,25 @@ leftist_heap<_Tp,_Cmp,_Alloc>::merge(Node* first_heap,Node* second_heap)
 }
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
+void
+leftist_heap<_Tp,_Cmp,_Alloc>::__erase_inner_node(Node* ptr)
+{
+    Node *p_lc=ptr->lc,*p_rc=ptr->rc;
+    if(p_lc!=nullptr)p_lc->ftr=nullptr;
+    if(p_rc!=nullptr)p_rc->ftr=nullptr;
+    if(ptr==_root)
+    {
+        _root=merge(p_lc,p_rc);
+        return;
+    }
+    bool is_lc=ptr->ftr->lc==ptr;
+    Node *&ptr_pos=is_lc?ptr->ftr->lc:ptr->ftr->rc;
+    ptr_pos=merge(p_lc,p_rc);
+    ptr=ptr->ftr;
+    while(ptr!=nullptr&&ptr->maintain())ptr=ptr->ftr;
+}
+
+template<typename _Tp,typename _Cmp,typename _Alloc>
 struct leftist_heap<_Tp,_Cmp,_Alloc>::iterator
 {
     private:
@@ -153,9 +176,12 @@ struct leftist_heap<_Tp,_Cmp,_Alloc>::iterator
         Node *real_node;
 		friend class leftist_heap;
         iterator(Node* ptr):real_node(ptr) {}
-        
+
     public:
 		iterator():real_node(nullptr){}
+        iterator(const iterator &Iterator):
+            real_node(Iterator.real_node)
+        {}
 
         const _Tp &operator*()const
         {
@@ -218,6 +244,22 @@ leftist_heap<_Tp,_Cmp,_Alloc>::join(leftist_heap<_Tp,_Cmp,_Alloc>& Other_heap)
     Other_heap._root=nullptr;
     Other_heap.s=0;
     return iterator(_root);
+}
+
+template<typename _Tp,typename _Cmp,typename _Alloc>
+bool
+leftist_heap<_Tp,_Cmp,_Alloc>::modify(const iterator& Iterator,const value_type& Value)
+{
+    Node *ptr=Iterator.real_node;
+    if(ptr==nullptr)return false;
+    __erase_inner_node(ptr);
+    ptr->val=Value;
+    ptr->ftr=nullptr;
+    ptr->lc=nullptr;
+    ptr->rc=nullptr;
+    ptr->maintain();
+    _root=merge(_root,ptr);
+    return true;
 }
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
