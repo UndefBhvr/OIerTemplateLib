@@ -245,24 +245,14 @@ struct link_cut_tree<_Tp,_Func,_Alloc>::iterator
     public:
 
 		iterator():ptr(nullptr) {}
-        iterator(const iterator& Iterator):
-            ptr(Iterator.ptr)
-            {}
-        iterator &operator=(const iterator& rhs)
-        {
-            ptr=rhs.ptr;
-            return *this;
-        }
 
-        _Tp &operator*()const {return ptr->val;}
-		operator bool()const {return ptr!=nullptr;}
-		bool operator==(const iterator& rhs)const
+        const _Tp &operator*()const
 		{
-			return ptr==rhs.ptr;
+			return ptr->val;
 		}
-		bool operator!=(const iterator& rhs)const
+		operator void*()const
 		{
-			return ptr!=rhs.ptr;
+			return (void*)ptr;
 		}
 };
 

@@ -119,18 +119,16 @@ pairing_heap<_Tp,_Cmp,_Alloc>::iterator
     public:
 
 		iterator():__real_node(nullptr){}
-        iterator(const iterator& other_iter):__real_node(other_iter.__real_node) {}
-        
-		iterator &operator=(const iterator& other_iter)
+
+        const _Tp &operator*()const
 		{
-			__real_node=other_iter.__real_node;
-			return *this;
+			return __real_node->value;
 		}
 
-        _Tp &operator*()const {return __real_node->value;}
-        operator bool()const {return __real_node!=nullptr;}
-        bool operator==(const iterator& rhs)const {return __real_node==rhs.__real_node;}
-        bool operator!=(const iterator& rhs)const {return __real_node!=rhs.__real_node;}
+        operator void*()const
+		{
+			return __real_node;
+		}
 };
 
 template<typename _Tp,typename _Cmp,typename _Alloc>

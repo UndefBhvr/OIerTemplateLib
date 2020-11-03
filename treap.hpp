@@ -270,15 +270,17 @@ struct treap<_Tp,_Cmp,_Alloc>::_const_iterator
 
     public:
 
-        _const_iterator(){}
-        _const_iterator(const _const_iterator& Iter):
-            ptr(Iter.ptr)
-        {}
+        _const_iterator():ptr(nullptr){}
 
         const _Tp &operator*()const
         {
             return ptr->value;
         }
+
+		operator void*()const
+		{
+			return (void*)ptr;
+		}
 
         _const_iterator &operator++()
         {

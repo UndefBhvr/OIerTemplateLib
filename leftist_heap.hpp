@@ -179,25 +179,14 @@ struct leftist_heap<_Tp,_Cmp,_Alloc>::iterator
 
     public:
 		iterator():real_node(nullptr){}
-        iterator(const iterator &Iterator):
-            real_node(Iterator.real_node)
-        {}
 
         const _Tp &operator*()const
         {
             return real_node->val;
         }
-        operator bool()const
+        operator void*()const
 		{
-			return real_node!=nullptr;
-		}
-        bool operator==(const iterator& rhs)const
-		{
-			return real_node==rhs.__real_node;
-		}
-        bool operator!=(const iterator& rhs)const
-		{
-			return real_node!=rhs.real_node;
+			return (void*)real_node;
 		}
 };
 
