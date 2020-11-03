@@ -78,7 +78,7 @@
 
 ### 3.pairing_heap：变种
 
-将实现一种配对堆的变种，其`decrease_key`均摊为`O(\log \log n)`，理论上优于朴素配对堆，实际上效率相仿。
+将实现一种配对堆的变种，其`decrease_key`均摊为O(log log n)，理论上优于朴素配对堆，实际上效率相仿。
 
 ### 4.vector
 
