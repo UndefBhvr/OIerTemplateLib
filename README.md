@@ -64,6 +64,13 @@
 
 支持动态树的连边、删边、单点修改、路径查询。
 
+### 5.pairing_heap：变种
+
+将实现一种配对堆的变种，其`decrease_key`均摊为O(log log n)，理论上优于朴素配对堆，实际上效率相仿。
+
+* 这个数据结构并没有在论文中给出名字...考虑到作者名字叫Amr Elmasry，名字暂时写为`elmasry_pairing_heap`。
+* 论文地址：https://core.ac.uk/download/pdf/204209612.pdf
+
 ---
 
 已经计划实现的数据结构：
@@ -76,11 +83,8 @@
 
 将实现一个均摊复杂度与Fib堆等同的优先队列。
 
-### 3.pairing_heap：变种
 
-将实现一种配对堆的变种，其`decrease_key`均摊为O(log log n)，理论上优于朴素配对堆，实际上效率相仿。
-
-### 4.vector
+### 3.vector
 
 略。
 
