@@ -1,5 +1,5 @@
-#ifndef COMBINE_PAIRING_HEAP_HPP
-#define COMBINE_PAIRING_HEAP_HPP //C++ Header combone_pairing_heap.hpp
+#ifndef ELMASRY_PAIRING_HEAP_HPP
+#define ELMASRY_PAIRING_HEAP_HPP //C++ Header elmasry_pairing_heap.hpp
 
 #include<algorithm>
 #include<set>
@@ -26,7 +26,7 @@ namespace oitl
  */
 
 template<typename _Tp,typename _Cmp=std::less<_Tp>,typename _Alloc=std::allocator<_Tp> >
-class combine_pairing_heap:private _Cmp
+class elmasry_pairing_heap:private _Cmp
 {
 	struct _const_iterator;
 
@@ -42,7 +42,7 @@ class combine_pairing_heap:private _Cmp
 	typedef _const_iterator iterator;
 	typedef _const_iterator const_iterator;
 
-    combine_pairing_heap():
+    elmasry_pairing_heap():
         insert_buffer(nullptr),
         tree_pool(nullptr),
         top_node(nullptr)
@@ -53,7 +53,7 @@ class combine_pairing_heap:private _Cmp
     void pop();
     const _Tp &top()const;
     void modify(const const_iterator&,_Tp);
-	void join(combine_pairing_heap&);
+	void join(elmasry_pairing_heap&);
 	size_type size()const;
 	bool empty()const;
 
@@ -88,7 +88,7 @@ class combine_pairing_heap:private _Cmp
 	inline void __delete_node(Node*);
 
 	void __clear();
-	void move(combine_pairing_heap&);
+	void move(elmasry_pairing_heap&);
 	void push_to_tree_pool(Node*);
     Node *link(Node*,Node*);
     Node *two_pass(Node*);
@@ -99,7 +99,7 @@ class combine_pairing_heap:private _Cmp
 
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
-struct combine_pairing_heap<_Tp,_Cmp,_Alloc>::Node
+struct elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::Node
 {
 	_Tp val;
 	Node *left,*sibling,*child;
@@ -114,12 +114,12 @@ struct combine_pairing_heap<_Tp,_Cmp,_Alloc>::Node
 };
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
-struct combine_pairing_heap<_Tp,_Cmp,_Alloc>::_const_iterator
+struct elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::_const_iterator
 {
     private:
 
         Node *real_node;
-		friend class combine_pairing_heap;
+		friend class elmasry_pairing_heap;
         _const_iterator(Node* ptr):real_node(ptr) {}
 
     public:
@@ -138,8 +138,8 @@ struct combine_pairing_heap<_Tp,_Cmp,_Alloc>::_const_iterator
 template<typename _Tp,typename _Cmp,typename _Alloc>
 inline
 typename
-combine_pairing_heap<_Tp,_Cmp,_Alloc>::Node*
-combine_pairing_heap<_Tp,_Cmp,_Alloc>::__get_node(_Tp __value)
+elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::Node*
+elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::__get_node(_Tp __value)
 {
 #if __cplusplus>=201103L
     Node *new_ptr=node_alloc_traits_type::allocate(_node_allocator,1);
@@ -154,7 +154,7 @@ combine_pairing_heap<_Tp,_Cmp,_Alloc>::__get_node(_Tp __value)
 template<typename _Tp,typename _Cmp,typename _Alloc>
 inline
 void
-combine_pairing_heap<_Tp,_Cmp,_Alloc>::__delete_node(Node *__ptr)
+elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::__delete_node(Node *__ptr)
 {
 #if __cplusplus>=201103L
     node_alloc_traits_type::destroy(_node_allocator,__ptr);
@@ -167,7 +167,7 @@ combine_pairing_heap<_Tp,_Cmp,_Alloc>::__delete_node(Node *__ptr)
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
 void
-combine_pairing_heap<_Tp,_Cmp,_Alloc>::__clear()
+elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::__clear()
 {
 	insert_buffer=nullptr;
 	tree_pool=nullptr;
@@ -178,7 +178,7 @@ combine_pairing_heap<_Tp,_Cmp,_Alloc>::__clear()
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
 void
-combine_pairing_heap<_Tp,_Cmp,_Alloc>::move(combine_pairing_heap &other)
+elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::move(elmasry_pairing_heap &other)
 {
 	insert_buffer=other.insert_buffer;
 	tree_pool=other.tree_pool;
@@ -190,7 +190,7 @@ combine_pairing_heap<_Tp,_Cmp,_Alloc>::move(combine_pairing_heap &other)
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
 void
-combine_pairing_heap<_Tp,_Cmp,_Alloc>::push_to_tree_pool(Node *ptr)
+elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::push_to_tree_pool(Node *ptr)
 {
 	ptr->left=nullptr;
 	ptr->sibling=tree_pool;
@@ -204,8 +204,8 @@ combine_pairing_heap<_Tp,_Cmp,_Alloc>::push_to_tree_pool(Node *ptr)
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
 typename
-combine_pairing_heap<_Tp,_Cmp,_Alloc>::Node*
-combine_pairing_heap<_Tp,_Cmp,_Alloc>::link(Node *l,Node *r)
+elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::Node*
+elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::link(Node *l,Node *r)
 {
     if(l==nullptr)return r;
     if(r==nullptr)return l;
@@ -219,8 +219,8 @@ combine_pairing_heap<_Tp,_Cmp,_Alloc>::link(Node *l,Node *r)
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
 typename
-combine_pairing_heap<_Tp,_Cmp,_Alloc>::Node*
-combine_pairing_heap<_Tp,_Cmp,_Alloc>::two_pass(Node *head)
+elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::Node*
+elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::two_pass(Node *head)
 {
     if(head==nullptr||head->sibling==nullptr)return head;
     Node *other=head->sibling,*rest=head->sibling->sibling;
@@ -234,8 +234,8 @@ combine_pairing_heap<_Tp,_Cmp,_Alloc>::two_pass(Node *head)
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
 typename
-combine_pairing_heap<_Tp,_Cmp,_Alloc>::Node*
-combine_pairing_heap<_Tp,_Cmp,_Alloc>::multi_pass(Node *head)
+elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::Node*
+elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::multi_pass(Node *head)
 {
     if(head==nullptr||head->sibling==nullptr)return head;
     static std::queue<Node*,std::deque<Node*,node_ptr_alloc_type> > ptr_que;
@@ -263,7 +263,7 @@ combine_pairing_heap<_Tp,_Cmp,_Alloc>::multi_pass(Node *head)
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
 void
-combine_pairing_heap<_Tp,_Cmp,_Alloc>::combine()
+elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::combine()
 {
     for(Node *i=insert_buffer;i!=nullptr;i=i->sibling)i->child=nullptr;
     insert_buffer=multi_pass(insert_buffer);
@@ -293,8 +293,8 @@ combine_pairing_heap<_Tp,_Cmp,_Alloc>::combine()
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
 typename
-combine_pairing_heap<_Tp,_Cmp,_Alloc>::iterator
-combine_pairing_heap<_Tp,_Cmp,_Alloc>::push(_Tp Value)
+elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::iterator
+elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::push(_Tp Value)
 {
     Node *ptr=__get_node(Value);
     if(insert_buffer!=nullptr)insert_buffer->left=ptr;
@@ -307,7 +307,7 @@ combine_pairing_heap<_Tp,_Cmp,_Alloc>::push(_Tp Value)
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
 void
-combine_pairing_heap<_Tp,_Cmp,_Alloc>::pop()
+elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::pop()
 {
     if(top_node->child==top_node)
     {
@@ -337,14 +337,14 @@ combine_pairing_heap<_Tp,_Cmp,_Alloc>::pop()
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
 const _Tp&
-combine_pairing_heap<_Tp,_Cmp,_Alloc>::top()const
+elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::top()const
 {
     return top_node->val;
 }
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
 void
-combine_pairing_heap<_Tp,_Cmp,_Alloc>::modify(const iterator& Iterator,_Tp Value)
+elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::modify(const iterator& Iterator,_Tp Value)
 {
 	Node *ptr=(Node*)Iterator.real_node;
 	if(_Cmp::operator()(top_node->val,Value))top_node=ptr;
@@ -387,7 +387,7 @@ combine_pairing_heap<_Tp,_Cmp,_Alloc>::modify(const iterator& Iterator,_Tp Value
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
 void
-combine_pairing_heap<_Tp,_Cmp,_Alloc>::join(combine_pairing_heap &other)
+elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::join(elmasry_pairing_heap &other)
 {
 	if(other._size==0)return;
 	if(_size==0)move(other);
@@ -410,15 +410,15 @@ combine_pairing_heap<_Tp,_Cmp,_Alloc>::join(combine_pairing_heap &other)
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
 typename
-combine_pairing_heap<_Tp,_Cmp,_Alloc>::size_type
-combine_pairing_heap<_Tp,_Cmp,_Alloc>::size()const
+elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::size_type
+elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::size()const
 {
 	return _size;
 }
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
 bool
-combine_pairing_heap<_Tp,_Cmp,_Alloc>::empty()const
+elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::empty()const
 {
 	return _size==0;
 }
@@ -429,4 +429,4 @@ combine_pairing_heap<_Tp,_Cmp,_Alloc>::empty()const
 
 } //namespace oitl
 
-#endif //C++ Header combine_pairing_heap.hpp
+#endif //C++ Header elmasry_pairing_heap.hpp
