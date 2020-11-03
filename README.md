@@ -66,10 +66,11 @@
 
 ### 5.pairing_heap：变种
 
-将实现一种配对堆的变种，其`decrease_key`均摊为O(log log n)，理论上优于朴素配对堆，实际上效率相仿。
+实现了一种配对堆的变种，其`decrease_key`均摊为O(log log n)，理论上优于朴素配对堆，实际上效率相仿。
 
 * 这个数据结构并没有在论文中给出名字...考虑到作者名字叫Amr Elmasry，名字暂时写为`elmasry_pairing_heap`。
 * 论文地址：https://core.ac.uk/download/pdf/204209612.pdf
+* 由于~~我懒~~时间所限，`modify()`（以小根堆为例）暂时不支持增大关键字
 
 ---
 
