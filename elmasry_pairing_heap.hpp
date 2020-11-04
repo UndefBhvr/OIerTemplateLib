@@ -387,24 +387,24 @@ elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::modify(const iterator& Iterator,_Tp Value
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
 void
-elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::join(elmasry_pairing_heap &other)
+elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::join(elmasry_pairing_heap &Other_heap)
 {
-	if(other._size==0)return;
-	if(_size==0)move(other);
-	if(_size>=other._size)
+	if(Other_heap._size==0)return;
+	if(_size==0)move(Other_heap);
+	if(_size>=Other_heap._size)
 	{
-		other.combine();
-		_size+=other._size;
-		push_to_tree_pool(other.tree_pool);
-		other.__clear();
+		Other_heap.combine();
+		_size+=Other_heap._size;
+		push_to_tree_pool(Other_heap.tree_pool);
+		Other_heap.__clear();
 	}
 	else
 	{
 		combine();
-		other._size+=_size;
-		other.push_to_tree_pool(tree_pool);
+		Other_heap._size+=_size;
+		Other_heap.push_to_tree_pool(tree_pool);
 		__clear();
-		move(other);
+		move(Other_heap);
 	}
 }
 

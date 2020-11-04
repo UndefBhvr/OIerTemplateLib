@@ -39,7 +39,7 @@ pairing_heap:_Cmp
 
         Node* _root;
         size_t s;
-        Node* merge(Node*,Node*);
+        inline Node* merge(Node*,Node*);
         Node* __pop();
         void erase_all_node(Node *ptr);
 
@@ -60,7 +60,7 @@ pairing_heap:_Cmp
         _Tp &top()const;
         iterator pop();
         void join(pairing_heap&);
-        bool modify(const iterator&,_Tp);
+        void modify(const iterator&,_Tp);
         size_t size();
         bool empty();
 };
@@ -79,6 +79,7 @@ pairing_heap<_Tp,_Cmp,_Alloc>::Node
 };
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
+inline
 typename
 pairing_heap<_Tp,_Cmp,_Alloc>::Node*
 pairing_heap<_Tp,_Cmp,_Alloc>::__get_node(_Tp value)
@@ -94,6 +95,7 @@ pairing_heap<_Tp,_Cmp,_Alloc>::__get_node(_Tp value)
 };
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
+inline
 void
 pairing_heap<_Tp,_Cmp,_Alloc>::__delete_node(Node *ptr)
 {
@@ -141,6 +143,7 @@ pairing_heap<_Tp,_Cmp,_Alloc>::~pairing_heap()
 }
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
+inline
 typename
 pairing_heap<_Tp,_Cmp,_Alloc>::Node* 
 pairing_heap<_Tp,_Cmp,_Alloc>::merge(Node* ptr1,Node* ptr2)
@@ -235,11 +238,10 @@ pairing_heap<_Tp,_Cmp,_Alloc>::join(pairing_heap& Other_heap)
 }
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
-bool
+void
 pairing_heap<_Tp,_Cmp,_Alloc>::modify(const iterator& Iter,_Tp Value)
 {
     Node* ptr=Iter.__real_node;
-    if(ptr==nullptr)return 0;
     if(_Cmp::operator()(Value,ptr->value))
     {
         if(ptr->left_node->child==ptr)
@@ -254,12 +256,12 @@ pairing_heap<_Tp,_Cmp,_Alloc>::modify(const iterator& Iter,_Tp Value)
         _root=merge(ptr,__pop());
         changed_node->value=Value;
         _root=merge(changed_node,_root);
-        return true;
+        return;
     }
     ptr->value=Value;
     if(_root==ptr)
     {
-        return true;
+        return;
     }
     if(ptr->left_node->child==ptr)
         ptr->left_node->child=ptr->sibling;
@@ -269,7 +271,6 @@ pairing_heap<_Tp,_Cmp,_Alloc>::modify(const iterator& Iter,_Tp Value)
         ptr->sibling->left_node=ptr->left_node;
     ptr->left_node=ptr->sibling=nullptr;
     _root=merge(_root,ptr);
-    return true;
 }
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
