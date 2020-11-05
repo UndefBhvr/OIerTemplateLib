@@ -3,6 +3,8 @@
 
 #include<algorithm>
 #include<memory>
+#include<utility>
+#include<functional>
 
 namespace oitl
 {
