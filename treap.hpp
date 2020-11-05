@@ -59,7 +59,7 @@ class treap:_Cmp
         void split_val(Node*,const _Tp&,Node*&,Node*&);
         void split_val_equal(Node*,const _Tp&,Node*&,Node*&);
 
-		inline static unsigned long long get_pri();
+		inline static unsigned long get_pri();
 		void destroy_inner_nodes(Node*);
 
 	#if __cplusplus>=201103L
@@ -100,7 +100,7 @@ template<typename _Tp,typename _Cmp,typename _Alloc>
 struct treap<_Tp,_Cmp,_Alloc>::Node
 {
     _Tp value;
-    unsigned long long pri;
+    unsigned long pri;
     size_type s;
     Node *lc,*rc,*ftr;
     
@@ -336,14 +336,18 @@ struct treap<_Tp,_Cmp,_Alloc>::_const_iterator
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
 inline
-unsigned long long
+unsigned long
 treap<_Tp,_Cmp,_Alloc>::get_pri()
 {
 #if __cplusplus>=201103L
-    static std::mt19937_64 rand_mker;
+    static std::mt19937 rand_mker;
 	return rand_mker();
 #else
-    return (rand()*1ULL<<32ULL)+rand();
+	#if RAND_MAX<0x3fffffff
+    	return (rand()*1ULL<<32ULL)+rand();
+	#else
+		return rand();
+	#endif
 #endif
 }
 
