@@ -529,7 +529,7 @@ typename treap<_Tp,_Cmp,_Alloc>::size_type
 treap<_Tp,_Cmp,_Alloc>::size()const
 {
     if(root==nullptr)return 0;
-    return root->size;
+    return root->s;
 }
 
 #if __cplusplus<201103L
