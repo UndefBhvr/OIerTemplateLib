@@ -371,16 +371,22 @@ template<typename _Tp,typename _Cmp,typename _Alloc>
 std::pair<typename treap<_Tp,_Cmp,_Alloc>::const_iterator,bool>
 treap<_Tp,_Cmp,_Alloc>::insert(const _Tp& Value)
 {
-    Node *ptr1,*ptr2,*ptr3;
-    split_val(root,Value,ptr1,ptr2);
-    split_val_equal(ptr2,Value,ptr2,ptr3);
-    if(ptr2!=nullptr)
-    {
-        root=merge(merge(ptr1,ptr2),ptr3);
-        return std::make_pair(const_iterator(end_node),false);
-    }
+    if(find(Value)!=end())return std::make_pair(end(),false);
+    Node *ptr=root,*last=end_node;
     Node *new_ptr=__get_new_node(Value);
-    root=merge(merge(ptr1,new_ptr),ptr3);
+    bool is_lc=true;
+    while(ptr!=NULL&&ptr->pri>new_ptr->pri)
+    {
+        ++ptr->s;
+        last=ptr;
+        if(_Cmp::operator()(Value,ptr->value))ptr=ptr->lc,is_lc=true;
+        else if(_Cmp::operator()(ptr->value,Value))ptr=ptr->rc,is_lc=false;
+    }
+    split_val(ptr,Value,new_ptr->lc,new_ptr->rc);
+    new_ptr->maintain();
+    if(is_lc)last->lc=new_ptr;
+    else last->rc=new_ptr;
+    last->maintain();
     return std::make_pair(const_iterator(new_ptr),true);
 }
 
@@ -388,16 +394,21 @@ template<typename _Tp,typename _Cmp,typename _Alloc>
 bool
 treap<_Tp,_Cmp,_Alloc>::erase(const _Tp& Value)
 {
-    Node *ptr1,*ptr2,*ptr3;
-    split_val(root,Value,ptr1,ptr2);
-    split_val_equal(ptr2,Value,ptr2,ptr3);
-    if(ptr2==nullptr)
+    if(find(Value)==end())return false;
+    Node *ptr=root;
+    bool is_lc=true;
+    while(1)
     {
-        root=merge(ptr1,ptr3);
-        return false;
+        --ptr->s;
+        if(_Cmp::operator()(Value,ptr->value))ptr=ptr->lc,is_lc=true;
+        else if(_Cmp::operator()(ptr->value,Value))ptr=ptr->rc,is_lc=false;
+        else break;
     }
-    root=merge(ptr1,ptr3);
-    __delete_node(ptr2);
+    Node *fptr=ptr->ftr;
+    if(is_lc)fptr->lc=merge(ptr->lc,ptr->rc);
+    else fptr->rc=merge(ptr->lc,ptr->rc);
+    fptr->maintain();
+    __delete_node(ptr);
     return true;
 }
 
@@ -433,7 +444,7 @@ treap<_Tp,_Cmp,_Alloc>::find(const _Tp& Value)const
     while(now!=nullptr)
     {
         if(_Cmp::operator()(Value,now->value))now=now->lc;
-        else if(_Cmp::operator()(now->valueue,Value))now=now->rc;
+        else if(_Cmp::operator()(now->value,Value))now=now->rc;
         else return const_iterator(now);
     }
     return const_iterator(end_node);
