@@ -1,3 +1,4 @@
 test.cpp
+test.hpp
 *.exe
 *.json
