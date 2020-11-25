@@ -1,41 +1,65 @@
 #ifndef PAIRING_HEAP_HPP
 #define PAIRING_HEAP_HPP//C++ Header pairing_heap.hpp
 
+#include<cstddef>
 #include<memory>
 #include<utility>
 #include<functional>
+
+#if __cplusplus>=201103L
+	#include<type_traits>
+#endif
+
+#include"../../utility/oitl_concepts.hpp"
+
+#ifdef _OITL_CONCEPT_AVAILABLE
+    #include<concepts>
+#endif
 
 namespace oitl
 {
 
 #if __cplusplus<201103L
-	#ifdef nullptr
-		#undef nullptr
-	#endif
-	#define nullptr NULL
+    #ifdef nullptr
+        #undef nullptr
+    #endif
+    #define nullptr NULL
 #endif
 
-template<typename _Tp,typename _Cmp=std::less<_Tp>,typename _Alloc=std::allocator<_Tp> >
+
+
+template<
+    typename _Tp,
+    typename _Cmp=std::less<_Tp>,
+    typename _Alloc=std::allocator<_Tp> 
+    >
+
+#ifdef _OITL_CONCEPT_AVAILABLE
+	requires
+		std::relation<_Cmp,_Tp,_Tp>
+		&&concepts::allocator_of_type<_Alloc,_Tp>
+#endif
+
 class
 pairing_heap:_Cmp
 {
-	
+
     public:
 
-		typedef _Tp value_type;
-		typedef _Cmp cmp_type;
-		typedef _Alloc alloc_type;
-		typedef size_t size_type;
-	#if __cplusplus>=201103L
+        typedef _Tp value_type;
+        typedef _Cmp cmp_type;
+        typedef _Alloc alloc_type;
+        typedef size_t size_type;
+    #if __cplusplus>=201103L
         typedef typename std::allocator_traits<_Alloc> alloc_traits_type;
-	#endif
+    #endif
 
     private:
 
         struct Node;
 
-		inline Node *__get_node(_Tp);
-		inline void __delete_node(Node*);
+        inline Node *__get_node(_Tp);
+        inline void __delete_node(Node*);
 
         Node* _root;
         size_t s;
@@ -43,16 +67,16 @@ pairing_heap:_Cmp
         Node* __pop();
         void erase_all_node(Node *ptr);
 
-	#if __cplusplus>=201103L
+    #if __cplusplus>=201103L
         typedef typename alloc_traits_type::template rebind_traits<Node> node_alloc_traits_type;
         typedef typename node_alloc_traits_type::allocator_type node_alloc_type;
     #else
-		typedef typename _Alloc::template rebind<Node>::other node_alloc_type;
+        typedef typename _Alloc::template rebind<Node>::other node_alloc_type;
     #endif
-	
-		node_alloc_type __alloc;
 
-	public:
+        node_alloc_type __alloc;
+
+    public:
 
         struct iterator;
         ~pairing_heap();
@@ -88,10 +112,10 @@ pairing_heap<_Tp,_Cmp,_Alloc>::__get_node(_Tp value)
     Node *ptr=node_alloc_traits_type::allocate(__alloc,1);
     node_alloc_traits_type::construct(__alloc,ptr,value);
 #else
-	Node *ptr=__alloc.allocate(1);
-	__alloc.construct(ptr,value);
+    Node *ptr=__alloc.allocate(1);
+    __alloc.construct(ptr,value);
 #endif
-	return ptr;
+    return ptr;
 };
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
@@ -103,8 +127,8 @@ pairing_heap<_Tp,_Cmp,_Alloc>::__delete_node(Node *ptr)
     node_alloc_traits_type::destroy(__alloc,ptr);
     node_alloc_traits_type::deallocate(__alloc,ptr,1);
 #else
-	__alloc.destroy(ptr);
-	__alloc.deallocate(ptr,1);
+    __alloc.destroy(ptr);
+    __alloc.deallocate(ptr,1);
 #endif
 };
 
@@ -120,17 +144,17 @@ pairing_heap<_Tp,_Cmp,_Alloc>::iterator
 
     public:
 
-		iterator():__real_node(nullptr){}
+        iterator():__real_node(nullptr){}
 
         const _Tp &operator*()const
-		{
-			return __real_node->value;
-		}
+        {
+            return __real_node->value;
+        }
 
         operator void*()const
-		{
-			return __real_node;
-		}
+        {
+            return __real_node;
+        }
 };
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
@@ -188,7 +212,7 @@ pairing_heap<_Tp,_Cmp,_Alloc>::erase_all_node(Node *ptr)
     {
         erase_all_node(ptr->sibling);
     }
-	__delete_node(ptr);
+    __delete_node(ptr);
 }
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
@@ -202,7 +226,7 @@ pairing_heap<_Tp,_Cmp,_Alloc>::push(const _Tp& Value)
         _root=__get_node(Value);
         return iterator(_root);
     }
-	Node *ptr=__get_node(Value);
+    Node *ptr=__get_node(Value);
     _root=merge(_root,ptr);
     return iterator(ptr);
 }
@@ -223,7 +247,7 @@ pairing_heap<_Tp,_Cmp,_Alloc>::pop()
     --s;
     Node *ptr=_root;
     Node *ret=__pop();
-	__delete_node(ptr);
+    __delete_node(ptr);
     return iterator(ret);
 }
 
@@ -288,7 +312,7 @@ pairing_heap<_Tp,_Cmp,_Alloc>::empty()
 }
 
 #if __cplusplus<201103L
-	#undef nullptr
+    #undef nullptr
 #endif
 
 } //namespace oitl
