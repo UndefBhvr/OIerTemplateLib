@@ -10,7 +10,9 @@
 	#include<type_traits>
 #endif
 
-#include"../../utility/oitl_concepts.hpp"
+#ifndef _OITL_DEPENDENCE_FREE
+	#include"../../utility/oitl_concepts.hpp"
+#endif
 
 #ifdef _OITL_CONCEPT_AVAILABLE
     #include<concepts>
