@@ -44,6 +44,8 @@ class leftist_heap:_Cmp
 		inline Node *__get_new_node(_Tp);
 		inline void __delete_node(Node*);
 
+		void destroy_inner_nodes(Node*);
+
     public:
 
 		typedef _Tp value_type;
@@ -55,6 +57,16 @@ class leftist_heap:_Cmp
 	#endif
 
         struct iterator;
+
+		leftist_heap():
+			_root(nullptr),
+			s(0)
+		{}
+		~leftist_heap()
+		{
+			destroy_inner_nodes(_root);
+		}
+
         iterator push(const _Tp&);
         value_type &top()const;
         iterator pop();
@@ -70,7 +82,8 @@ struct leftist_heap<_Tp,_Cmp,_Alloc>::Node
     _Tp val;
     Node *ftr,*lc,*rc;
     size_t npl;
-    Node(_Tp Value):
+
+    explicit Node(_Tp Value):
         val(Value),
 		ftr(nullptr),
         lc(nullptr),
@@ -132,6 +145,16 @@ leftist_heap<_Tp,_Cmp,_Alloc>::__delete_node(Node *__ptr)
 }
 
 template<typename _Tp,typename _Cmp,typename _Alloc>
+void
+leftist_heap<_Tp,_Cmp,_Alloc>::destroy_inner_nodes(Node *ptr)
+{
+	if(ptr==nullptr)return;
+	destroy_inner_nodes(ptr->lc);
+	destroy_inner_nodes(ptr->rc);
+    __delete_node(ptr);
+}
+
+template<typename _Tp,typename _Cmp,typename _Alloc>
 typename
 leftist_heap<_Tp,_Cmp,_Alloc>::Node*
 leftist_heap<_Tp,_Cmp,_Alloc>::merge(Node* first_heap,Node* second_heap)
@@ -177,7 +200,7 @@ struct leftist_heap<_Tp,_Cmp,_Alloc>::iterator
 
         Node *real_node;
 		friend class leftist_heap;
-        iterator(Node* ptr):real_node(ptr) {}
+        explicit iterator(Node* ptr):real_node(ptr) {}
 
     public:
 		iterator():real_node(nullptr){}

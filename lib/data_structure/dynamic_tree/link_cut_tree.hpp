@@ -68,7 +68,7 @@ struct LCT_splay<_Tp,_Func,_Alloc>::Node:_Func
         ch[1]=nullptr;
     }
 
-    Node(const _Tp& _value):
+    explicit Node(const _Tp& _value):
         val(_value),
         sum(_value),
         ftr(nullptr),
@@ -240,7 +240,7 @@ struct link_cut_tree<_Tp,_Func,_Alloc>::iterator
 
         Node* ptr;
         friend class link_cut_tree;
-        iterator(Node* p):ptr(p) {}
+        explicit iterator(Node* p):ptr(p) {}
         
     public:
 
@@ -311,7 +311,7 @@ link_cut_tree<_Tp,_Func,_Alloc>::make_node(_Tp Value)
 
 template<typename _Tp,typename _Func,typename _Alloc>
 bool
-link_cut_tree<_Tp,_Func,_Alloc>::erase_node(iterator &Iterator)
+link_cut_tree<_Tp,_Func,_Alloc>::erase_node(iterator &const Iterator)
 {
 	Node *ptr=Iterator.ptr;
 	if(ptr==nullptr)return false;

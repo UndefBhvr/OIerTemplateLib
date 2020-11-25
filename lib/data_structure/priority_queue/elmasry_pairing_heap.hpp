@@ -104,7 +104,7 @@ struct elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::Node
 	_Tp val;
 	Node *left,*sibling,*child;
 
-	Node(_Tp _val,Node *child_ptr=nullptr):
+	explicit Node(_Tp _val,Node *child_ptr=nullptr):
 	   val(_val),
 	   left(nullptr),
 	   sibling(nullptr),
@@ -120,7 +120,7 @@ struct elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::_const_iterator
 
         Node *real_node;
 		friend class elmasry_pairing_heap;
-        _const_iterator(Node* ptr):real_node(ptr) {}
+        explicit _const_iterator(Node* ptr):real_node(ptr) {}
 
     public:
 		_const_iterator():real_node(nullptr){}

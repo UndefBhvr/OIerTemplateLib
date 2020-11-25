@@ -81,7 +81,13 @@ pairing_heap:_Cmp
     public:
 
         struct iterator;
+
+		pairing_heap():
+			_root(nullptr),
+			s(0)
+		{}
         ~pairing_heap();
+
         iterator push(const _Tp&);
         _Tp &top()const;
         iterator pop();
@@ -115,7 +121,7 @@ pairing_heap<_Tp,_Cmp,_Alloc>::__get_node(_Tp value)
     node_alloc_traits_type::construct(__alloc,ptr,value);
 #else
     Node *ptr=__alloc.allocate(1);
-    __alloc.construct(ptr,value);
+    __alloc.construct(ptr,Node(value));
 #endif
     return ptr;
 };
@@ -141,7 +147,7 @@ pairing_heap<_Tp,_Cmp,_Alloc>::iterator
     private:
 
         Node* __real_node;
-        iterator(Node* ptr):__real_node(ptr) {}
+        explicit iterator(Node* ptr):__real_node(ptr) {}
         friend class pairing_heap;
 
     public:

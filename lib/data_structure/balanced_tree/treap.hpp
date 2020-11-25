@@ -48,9 +48,7 @@ class treap:_Cmp
 
 		struct _const_iterator;
 
-        Node *end_node;
-        Node *&root;
-
+        inline Node *__get_new_node();
         inline Node *__get_new_node(_Tp);
         inline void __emplace_node(Node*,_Tp);
         inline void __delete_node(Node*);
@@ -71,13 +69,17 @@ class treap:_Cmp
 
         _node_alloc_type _node_allocator;
 
+        Node *end_node;
+        Node *&root;
+
     public:
 
         typedef _const_iterator const_iterator;
 		typedef _const_iterator iterator;
 
         treap():
-            end_node(new Node),
+			_node_allocator(),
+            end_node(__get_new_node()),
             root(end_node->lc)
         {}
 
@@ -112,7 +114,7 @@ struct treap<_Tp,_Cmp,_Alloc>::Node
         ftr(nullptr)
     {}
 
-    Node(_Tp val):
+    explicit Node(_Tp val):
         value(val),
         pri(get_pri()),
         s(1),
@@ -163,6 +165,21 @@ struct treap<_Tp,_Cmp,_Alloc>::Node
 template<typename _Tp,typename _Cmp,typename _Alloc>
 inline
 typename treap<_Tp,_Cmp,_Alloc>::Node*
+treap<_Tp,_Cmp,_Alloc>::__get_new_node()
+{
+#if __cplusplus>=201103L
+    Node *new_ptr=_node_alloc_traits_type::allocate(_node_allocator,1);
+    _node_alloc_traits_type::construct(_node_allocator,new_ptr);
+#else
+	Node *new_ptr=_node_allocator.allocate(1);
+	_node_allocator.construct(new_ptr,Node());
+#endif
+    return new_ptr;
+}
+
+template<typename _Tp,typename _Cmp,typename _Alloc>
+inline
+typename treap<_Tp,_Cmp,_Alloc>::Node*
 treap<_Tp,_Cmp,_Alloc>::__get_new_node(_Tp __value)
 {
 #if __cplusplus>=201103L
@@ -170,7 +187,7 @@ treap<_Tp,_Cmp,_Alloc>::__get_new_node(_Tp __value)
     _node_alloc_traits_type::construct(_node_allocator,new_ptr,__value);
 #else
 	Node *new_ptr=_node_allocator.allocate(1);
-	_node_allocator.construct(new_ptr,__value);
+	_node_allocator.construct(new_ptr,Node(__value));
 #endif
     return new_ptr;
 }
@@ -264,7 +281,7 @@ struct treap<_Tp,_Cmp,_Alloc>::_const_iterator
 
         const Node *ptr;
 
-        _const_iterator(Node *ptr):
+        explicit _const_iterator(Node *ptr):
             ptr(ptr)
         {}
 
