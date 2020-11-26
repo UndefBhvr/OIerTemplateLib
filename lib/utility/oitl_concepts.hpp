@@ -36,6 +36,12 @@ concept allocator_of_type=
 	allocator<_Alloc>
 	&&std::same_as<_Tp,typename _Alloc::value_type>;
 
+template<typename _Tp,typename _Cmp,typename _Alloc>
+concept ordered_associative_container_general_constraint=
+	std::movable<_Tp>
+	&&std::relation<_Cmp,_Tp,_Tp>
+	&&allocator_of_type<_Alloc,_Tp>;
+
 } // namespace oitl::concepts
 
 } // namespace oitl

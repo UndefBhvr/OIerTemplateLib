@@ -29,8 +29,19 @@ namespace oitl
  * begin() in O(1) time
  */
 
-template<typename _Tp,typename _Cmp=std::less<_Tp>,typename _Alloc=std::allocator<_Tp> >
-class treap:_Cmp
+template<
+    typename _Tp,
+    typename _Cmp=std::less<_Tp>,
+    typename _Alloc=std::allocator<_Tp> 
+    >
+
+#ifdef _OITL_CONCEPT_AVAILABLE
+	requires
+		concepts::ordered_associative_container_general_constraint<_Tp,_Cmp,_Alloc>
+#endif
+
+class
+treap:_Cmp
 {
     public:
 

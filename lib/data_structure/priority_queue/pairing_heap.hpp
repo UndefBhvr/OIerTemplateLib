@@ -6,16 +6,8 @@
 #include<utility>
 #include<functional>
 
-#if __cplusplus>=201103L
-	#include<type_traits>
-#endif
-
 #ifndef _OITL_DEPENDENCE_FREE
 	#include"../../utility/oitl_concepts.hpp"
-#endif
-
-#ifdef _OITL_CONCEPT_AVAILABLE
-    #include<concepts>
 #endif
 
 namespace oitl
@@ -38,8 +30,7 @@ template<
 
 #ifdef _OITL_CONCEPT_AVAILABLE
 	requires
-		std::relation<_Cmp,_Tp,_Tp>
-		&&concepts::allocator_of_type<_Alloc,_Tp>
+		concepts::ordered_associative_container_general_constraint<_Tp,_Cmp,_Alloc>
 #endif
 
 class
