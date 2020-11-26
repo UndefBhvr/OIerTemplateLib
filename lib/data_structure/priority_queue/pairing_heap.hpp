@@ -1,21 +1,13 @@
-#ifndef PAIRING_HEAP_HPP
-#define PAIRING_HEAP_HPP//C++ Header pairing_heap.hpp
+#ifndef _OITL_DATA_STRUCTURE_PRIORITY_QUEUE_PAIRING_HEAP_HPP
+#define _OITL_DATA_STRUCTURE_PRIORITY_QUEUE_PAIRING_HEAP_HPP//C++ Header pairing_heap.hpp
 
 #include<cstddef>
 #include<memory>
 #include<utility>
 #include<functional>
 
-#if __cplusplus>=201103L
-	#include<type_traits>
-#endif
-
 #ifndef _OITL_DEPENDENCE_FREE
 	#include"../../utility/oitl_concepts.hpp"
-#endif
-
-#ifdef _OITL_CONCEPT_AVAILABLE
-    #include<concepts>
 #endif
 
 namespace oitl
@@ -38,8 +30,7 @@ template<
 
 #ifdef _OITL_CONCEPT_AVAILABLE
 	requires
-		std::relation<_Cmp,_Tp,_Tp>
-		&&concepts::allocator_of_type<_Alloc,_Tp>
+		concepts::ordered_associative_container_general_constraint<_Tp,_Cmp,_Alloc>
 #endif
 
 class
@@ -103,7 +94,7 @@ pairing_heap<_Tp,_Cmp,_Alloc>::Node
 {
     _Tp value;
     Node *left_node,*child,*sibling;
-    Node(const _Tp& val=_Tp()):
+    explicit Node(const _Tp& val):
         value(val),
         left_node(nullptr),
         child(nullptr),

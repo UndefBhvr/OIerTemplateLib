@@ -1,5 +1,5 @@
-#ifndef OITL_CONCEPTS_HPP
-#define OITL_CONCEPTS_HPP //C++ Header oitl_concepts.hpp
+#ifndef _OITL_UTILITY_OITL_CONCEPTS_HPP
+#define _OITL_UTILITY_OITL_CONCEPTS_HPP //C++ Header oitl_concepts.hpp
 
 #ifdef __GNUC__
     #if __cplusplus>=201709L && __GNUC__>=10
@@ -35,6 +35,12 @@ template<typename _Alloc,typename _Tp>
 concept allocator_of_type=
 	allocator<_Alloc>
 	&&std::same_as<_Tp,typename _Alloc::value_type>;
+
+template<typename _Tp,typename _Cmp,typename _Alloc>
+concept ordered_associative_container_general_constraint=
+	std::movable<_Tp>
+	&&std::relation<_Cmp,_Tp,_Tp>
+	&&allocator_of_type<_Alloc,_Tp>;
 
 } // namespace oitl::concepts
 

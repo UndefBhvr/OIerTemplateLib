@@ -1,3 +1,6 @@
+#ifndef _OITL_ALGORITHM_SORT_HPP
+#define _OITL_ALGORITHM_SORT_HPP // C++ Header sort.hpp
+
 #include"detail/sort_base.hpp"
 
 namespace oitl
@@ -35,3 +38,5 @@ sort(
 }
 
 } //namespace oitl
+
+#endif //C++ Header sort.hpp
