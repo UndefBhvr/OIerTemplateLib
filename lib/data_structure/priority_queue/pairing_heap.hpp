@@ -103,7 +103,7 @@ pairing_heap<_Tp,_Cmp,_Alloc>::Node
 {
     _Tp value;
     Node *left_node,*child,*sibling;
-    Node(const _Tp& val=_Tp()):
+    explicit Node(const _Tp& val):
         value(val),
         left_node(nullptr),
         child(nullptr),
