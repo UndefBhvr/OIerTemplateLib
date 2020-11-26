@@ -1,5 +1,5 @@
-#ifndef LEFTIST_HEAP_HPP
-#define LEFTIST_HEAP_HPP //C++ Header leftist_heap.hpp
+#ifndef _OITL_DATA_STRUCTURE_PRIORITY_QUEUE_LEFTIST_HEAP_HPP
+#define _OITL_DATA_STRUCTURE_PRIORITY_QUEUE_LEFTIST_HEAP_HPP //C++ Header leftist_heap.hpp
 
 #include<algorithm>
 #include<memory>

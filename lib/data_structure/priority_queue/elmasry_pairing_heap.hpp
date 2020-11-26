@@ -1,5 +1,5 @@
-#ifndef ELMASRY_PAIRING_HEAP_HPP
-#define ELMASRY_PAIRING_HEAP_HPP //C++ Header elmasry_pairing_heap.hpp
+#ifndef _OITL_DATA_STRUCTURE_PRIORITY_QUEUE_ELMASRY_PAIRING_HEAP_HPP
+#define _OITL_DATA_STRUCTURE_PRIORITY_QUEUE_ELMASRY_PAIRING_HEAP_HPP //C++ Header elmasry_pairing_heap.hpp
 
 #include<algorithm>
 #include<set>

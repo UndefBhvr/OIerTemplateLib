@@ -1,5 +1,5 @@
-#ifndef TREAP_HPP
-#define TREAP_HPP //C++ Header treap.hpp
+#ifndef _OITL_DATA_STRUCTURE_BALANCED_TREE_TREAP_HPP
+#define _OITL_DATA_STRUCTURE_BALANCED_TREE_TREAP_HPP //C++ Header treap.hpp
 
 #include<cstdlib>
 #include<memory>

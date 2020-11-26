@@ -1,5 +1,5 @@
-#ifndef LINK_CUT_TREE_HPP
-#define LINK_CUT_TREE_HPP //C++ Header link_cut_tree.hpp
+#ifndef _OITL_DATA_STRUCTURE_DYNAMIC_TREE_LINK_CUT_TREE_HPP
+#define _OITL_DATA_STRUCTURE_DYNAMIC_TREE_LINK_CUT_TREE_HPP //C++ Header link_cut_tree.hpp
 
 #include<utility>
 #include<algorithm>

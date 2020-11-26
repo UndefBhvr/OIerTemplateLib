@@ -1,5 +1,5 @@
-#ifndef PAIRING_HEAP_HPP
-#define PAIRING_HEAP_HPP//C++ Header pairing_heap.hpp
+#ifndef _OITL_DATA_STRUCTURE_PRIORITY_QUEUE_PAIRING_HEAP_HPP
+#define _OITL_DATA_STRUCTURE_PRIORITY_QUEUE_PAIRING_HEAP_HPP//C++ Header pairing_heap.hpp
 
 #include<cstddef>
 #include<memory>
