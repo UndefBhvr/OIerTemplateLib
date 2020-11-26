@@ -10,6 +10,10 @@
 #include<random>
 #endif
 
+#ifndef _OITL_DEPENDENCE_FREE
+	#include"../../utility/oitl_concepts.hpp"
+#endif
+
 namespace oitl
 {
 
