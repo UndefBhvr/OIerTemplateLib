@@ -1,8 +1,8 @@
 #ifndef _OITL_UTILITY_OITL_CONCEPTS_HPP
 #define _OITL_UTILITY_OITL_CONCEPTS_HPP //C++ Header oitl_concepts.hpp
 
-#ifdef __GNUC__
-    #if __cplusplus>=201709L && __GNUC__>=10
+#if defined(__cpp_concepts) && defined(__GNUC__)
+    #if __cpp_concepts>=201907L && __GNUC__>=10
         #undef _OITL_CONCEPT_AVAILABLE
         #define _OITL_CONCEPT_AVAILABLE 1
     #endif
