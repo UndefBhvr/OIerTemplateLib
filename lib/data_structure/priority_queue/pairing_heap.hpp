@@ -12,7 +12,8 @@
 #else //When you want to use this with dependence on only libstdc++
 	#define _OITL_LANG_VER __cplusplus
 		#ifdef _MSC_VER
-			#pragma message("Your language version might be incorrect with msvc")
+			#undef _OITL_LANG_VER
+            #define _OITL_LANG_VER _MSVC_LANG
 		#endif
 #endif // _OITL_DEPENDENCE_FREE
 
