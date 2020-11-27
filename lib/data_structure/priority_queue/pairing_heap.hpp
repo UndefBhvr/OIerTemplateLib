@@ -41,9 +41,7 @@ template<
     typename _Tp,
     typename _Cmp=std::less<_Tp>,
     typename _Alloc=std::allocator<_Tp> 
-    >
-
-	REQUIRES_OITL_TYPE_CONSTRAINT
+    > REQUIRES_OITL_TYPE_CONSTRAINT
 
 class
 pairing_heap:_Cmp
