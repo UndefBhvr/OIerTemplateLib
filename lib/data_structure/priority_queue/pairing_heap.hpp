@@ -18,7 +18,9 @@
 #endif // _OITL_DEPENDENCE_FREE
 
 #ifdef _OITL_CONCEPT_AVAILABLE //The support of concept depends on this macro
-    #define REQUIRES_OITL_TYPE_CONSTRAINT requires concepts::ordered_associative_container_general_constraint<_Tp, _Cmp, _Alloc>
+    #define REQUIRES_OITL_TYPE_CONSTRAINT\
+        requires\
+            concepts::ordered_associative_container_general_constraint<_Tp, _Cmp, _Alloc>
 #else
     #define REQUIRES_OITL_TYPE_CONSTRAINT
 #endif // _OITL_CONCEPT_AVAILABLE
@@ -71,8 +73,10 @@ pairing_heap:_Cmp
         void erase_all_node(Node *ptr);
 
     #if _OITL_LANG_VER>=201103L
-        typedef typename alloc_traits_type::template rebind_traits<Node> node_alloc_traits_type;
-        typedef typename node_alloc_traits_type::allocator_type node_alloc_type;
+        typedef typename alloc_traits_type::template rebind_traits<Node>
+            node_alloc_traits_type;
+        typedef typename node_alloc_traits_type::allocator_type
+            node_alloc_type;
     #else
         typedef typename _Alloc::template rebind<Node>::other node_alloc_type;
     #endif
