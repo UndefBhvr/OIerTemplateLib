@@ -7,13 +7,25 @@
 #include<functional>
 
 #ifndef _OITL_DEPENDENCE_FREE
+	#include"../../utility/oitl_def.hpp"
 	#include"../../utility/oitl_concepts.hpp"
-#endif
+#else //When you want to use this with dependence on only libstdc++
+	#define _OITL_LANG_VER __cplusplus
+		#ifdef _MSC_VER
+			#pragma message("Your language version might be incorrect with msvc")
+		#endif
+#endif // _OITL_DEPENDENCE_FREE
+
+#ifdef _OITL_CONCEPT_AVAILABLE //The support of concept depends on this macro
+    #define REQUIRES_OITL_TYPE_CONSTRAINT requires concepts::ordered_associative_container_general_constraint<_Tp, _Cmp, _Alloc>
+#else
+    #define REQUIRES_OITL_TYPE_CONSTRAINT
+#endif // _OITL_CONCEPT_AVAILABLE
 
 namespace oitl
 {
 
-#if __cplusplus<201103L
+#if _OITL_LANG_VER<201103L
     #ifdef nullptr
         #undef nullptr
     #endif
@@ -28,10 +40,7 @@ template<
     typename _Alloc=std::allocator<_Tp> 
     >
 
-#ifdef _OITL_CONCEPT_AVAILABLE
-	requires
-		concepts::ordered_associative_container_general_constraint<_Tp,_Cmp,_Alloc>
-#endif
+	REQUIRES_OITL_TYPE_CONSTRAINT
 
 class
 pairing_heap:_Cmp
@@ -43,7 +52,7 @@ pairing_heap:_Cmp
         typedef _Cmp cmp_type;
         typedef _Alloc allocator_type;
         typedef size_t size_type;
-    #if __cplusplus>=201103L
+    #if _OITL_LANG_VER>=201103L
         typedef typename std::allocator_traits<_Alloc> alloc_traits_type;
     #endif
 
@@ -60,7 +69,7 @@ pairing_heap:_Cmp
         Node* __pop();
         void erase_all_node(Node *ptr);
 
-    #if __cplusplus>=201103L
+    #if _OITL_LANG_VER>=201103L
         typedef typename alloc_traits_type::template rebind_traits<Node> node_alloc_traits_type;
         typedef typename node_alloc_traits_type::allocator_type node_alloc_type;
     #else
@@ -88,7 +97,7 @@ pairing_heap:_Cmp
         bool empty();
 };
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 struct
 pairing_heap<_Tp,_Cmp,_Alloc>::Node
 {
@@ -101,13 +110,13 @@ pairing_heap<_Tp,_Cmp,_Alloc>::Node
         sibling(nullptr) {}
 };
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 inline
 typename
 pairing_heap<_Tp,_Cmp,_Alloc>::Node*
 pairing_heap<_Tp,_Cmp,_Alloc>::__get_node(_Tp value)
 {
-#if __cplusplus>=201103L
+#if _OITL_LANG_VER>=201103L
     Node *ptr=node_alloc_traits_type::allocate(__alloc,1);
     node_alloc_traits_type::construct(__alloc,ptr,value);
 #else
@@ -117,12 +126,12 @@ pairing_heap<_Tp,_Cmp,_Alloc>::__get_node(_Tp value)
     return ptr;
 };
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 inline
 void
 pairing_heap<_Tp,_Cmp,_Alloc>::__delete_node(Node *ptr)
 {
-#if __cplusplus>=201103L
+#if _OITL_LANG_VER>=201103L
     node_alloc_traits_type::destroy(__alloc,ptr);
     node_alloc_traits_type::deallocate(__alloc,ptr,1);
 #else
@@ -131,7 +140,7 @@ pairing_heap<_Tp,_Cmp,_Alloc>::__delete_node(Node *ptr)
 #endif
 };
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 struct
 pairing_heap<_Tp,_Cmp,_Alloc>::iterator
 {
@@ -156,7 +165,7 @@ pairing_heap<_Tp,_Cmp,_Alloc>::iterator
         }
 };
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 pairing_heap<_Tp,_Cmp,_Alloc>::~pairing_heap()
 {
     if(_root!=nullptr)
@@ -165,7 +174,7 @@ pairing_heap<_Tp,_Cmp,_Alloc>::~pairing_heap()
     }
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 inline
 typename
 pairing_heap<_Tp,_Cmp,_Alloc>::Node* 
@@ -181,7 +190,7 @@ pairing_heap<_Tp,_Cmp,_Alloc>::merge(Node* ptr1,Node* ptr2)
     return ptr2;
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 typename
 pairing_heap<_Tp,_Cmp,_Alloc>::Node*
 pairing_heap<_Tp,_Cmp,_Alloc>::__pop()
@@ -199,7 +208,7 @@ pairing_heap<_Tp,_Cmp,_Alloc>::__pop()
     return _root=merge(merge(son1,son2),__pop());
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 void
 pairing_heap<_Tp,_Cmp,_Alloc>::erase_all_node(Node *ptr)
 {
@@ -214,7 +223,7 @@ pairing_heap<_Tp,_Cmp,_Alloc>::erase_all_node(Node *ptr)
     __delete_node(ptr);
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 typename
 pairing_heap<_Tp,_Cmp,_Alloc>::iterator
 pairing_heap<_Tp,_Cmp,_Alloc>::push(const _Tp& Value)
@@ -230,14 +239,14 @@ pairing_heap<_Tp,_Cmp,_Alloc>::push(const _Tp& Value)
     return iterator(ptr);
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 _Tp&
 pairing_heap<_Tp,_Cmp,_Alloc>::top()const
 {
     return _root->value;
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 typename
 pairing_heap<_Tp,_Cmp,_Alloc>::iterator
 pairing_heap<_Tp,_Cmp,_Alloc>::pop()
@@ -250,7 +259,7 @@ pairing_heap<_Tp,_Cmp,_Alloc>::pop()
     return iterator(ret);
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 void
 pairing_heap<_Tp,_Cmp,_Alloc>::join(pairing_heap& Other_heap)
 {
@@ -260,7 +269,7 @@ pairing_heap<_Tp,_Cmp,_Alloc>::join(pairing_heap& Other_heap)
     Other_heap._root=nullptr;
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 void
 pairing_heap<_Tp,_Cmp,_Alloc>::modify(const iterator& Iter,_Tp Value)
 {
@@ -296,21 +305,21 @@ pairing_heap<_Tp,_Cmp,_Alloc>::modify(const iterator& Iter,_Tp Value)
     _root=merge(_root,ptr);
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 size_t
 pairing_heap<_Tp,_Cmp,_Alloc>::size()
 {
     return s;
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 bool
 pairing_heap<_Tp,_Cmp,_Alloc>::empty()
 {
     return _root==nullptr;
 }
 
-#if __cplusplus<201103L
+#if _OITL_LANG_VER<201103L
     #undef nullptr
 #endif
 
