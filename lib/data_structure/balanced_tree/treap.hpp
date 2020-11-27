@@ -52,7 +52,7 @@ treap:_Cmp
         typedef _Tp Value_type;
         typedef _Cmp Comparator_type;
         typedef size_t size_type;
-        typedef _Alloc alloc_type;
+        typedef _Alloc allocator_type;
 	#if __cplusplus>=201103L
         typedef typename std::allocator_traits<_Alloc> alloc_traits_type;
 	#endif
