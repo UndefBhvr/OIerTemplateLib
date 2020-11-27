@@ -1,12 +1,7 @@
 #ifndef _OITL_UTILITY_OITL_CONCEPTS_HPP
 #define _OITL_UTILITY_OITL_CONCEPTS_HPP //C++ Header oitl_concepts.hpp
 
-#if defined(__cpp_concepts) && defined(__GNUC__)
-    #if __cpp_concepts>=201907L && __GNUC__>=10
-        #undef _OITL_CONCEPT_AVAILABLE
-        #define _OITL_CONCEPT_AVAILABLE 1
-    #endif
-#endif
+#include"oitl_def.hpp"
 
 #ifdef _OITL_CONCEPT_AVAILABLE // The lib is available only if <concepts> is available
 
