@@ -180,7 +180,7 @@ LCT_splay<_Tp,_Func,_Alloc>::__new_node(_Tp __val)
 	node_alloc_traits_type::construct(__alloc,ptr,__val);
 #else
     ptr=__alloc.allocate(1);
-	__alloc.construct(ptr,__val);
+	__alloc.construct(ptr,Node(__val));
 #endif
 	return ptr;
 }
@@ -226,11 +226,11 @@ class link_cut_tree:private __tree_base::LCT_splay<_Tp,_Func,_Alloc>
         struct iterator;
 
         iterator make_node(_Tp);
-		bool erase_node(iterator&);
-        bool link(const iterator&,const iterator&);
-        bool cut(const iterator&,const iterator&);
-        std::pair<_Tp,bool> query(const iterator&,const iterator&);
-        bool modify(const iterator&,_Tp);
+		bool erase_node(iterator);
+        bool link(iterator,iterator);
+        bool cut(iterator,iterator);
+        std::pair<_Tp,bool> query(iterator,iterator);
+        bool modify(iterator,_Tp);
 };
 
 template<typename _Tp,typename _Func,typename _Alloc>
@@ -311,7 +311,7 @@ link_cut_tree<_Tp,_Func,_Alloc>::make_node(_Tp Value)
 
 template<typename _Tp,typename _Func,typename _Alloc>
 bool
-link_cut_tree<_Tp,_Func,_Alloc>::erase_node(iterator &const Iterator)
+link_cut_tree<_Tp,_Func,_Alloc>::erase_node(iterator Iterator)
 {
 	Node *ptr=Iterator.ptr;
 	if(ptr==nullptr)return false;
@@ -321,7 +321,7 @@ link_cut_tree<_Tp,_Func,_Alloc>::erase_node(iterator &const Iterator)
 
 template<typename _Tp,typename _Func,typename _Alloc>
 bool
-link_cut_tree<_Tp,_Func,_Alloc>::link(const iterator& First_iter,const iterator& Second_iter)
+link_cut_tree<_Tp,_Func,_Alloc>::link(iterator First_iter,iterator Second_iter)
 {
     Node* first_ptr=First_iter.ptr;
     Node* second_ptr=Second_iter.ptr;
@@ -333,7 +333,7 @@ link_cut_tree<_Tp,_Func,_Alloc>::link(const iterator& First_iter,const iterator&
 
 template<typename _Tp,typename _Func,typename _Alloc>
 bool
-link_cut_tree<_Tp,_Func,_Alloc>::cut(const iterator& First_iter,const iterator& Second_iter)
+link_cut_tree<_Tp,_Func,_Alloc>::cut(iterator First_iter,iterator Second_iter)
 {
     Node* first_ptr=First_iter.ptr;
     Node* second_ptr=Second_iter.ptr;
@@ -350,7 +350,7 @@ link_cut_tree<_Tp,_Func,_Alloc>::cut(const iterator& First_iter,const iterator& 
 
 template<typename _Tp,typename _Func,typename _Alloc>
 std::pair<_Tp,bool>
-link_cut_tree<_Tp,_Func,_Alloc>::query(const iterator &First_iter,const iterator &Second_iter)
+link_cut_tree<_Tp,_Func,_Alloc>::query(iterator First_iter,iterator Second_iter)
 {
     Node* first_ptr=First_iter.ptr;
     Node* second_ptr=Second_iter.ptr;
@@ -363,7 +363,7 @@ link_cut_tree<_Tp,_Func,_Alloc>::query(const iterator &First_iter,const iterator
 
 template<typename _Tp,typename _Func,typename _Alloc>
 bool
-link_cut_tree<_Tp,_Func,_Alloc>::modify(const iterator &Iterator,_Tp Value)
+link_cut_tree<_Tp,_Func,_Alloc>::modify(iterator Iterator,_Tp Value)
 {
     Node* ptr=Iterator.ptr;
     if(ptr==nullptr)return false;
