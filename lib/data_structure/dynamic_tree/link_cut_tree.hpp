@@ -4,6 +4,7 @@
 #include<utility>
 #include<algorithm>
 #include<memory>
+#include<vector>
 
 namespace oitl
 {
@@ -25,14 +26,9 @@ namespace __tree_base
 template<typename _Tp,typename _Func,typename _Alloc>
 class LCT_splay
 {
-		LCT_splay(){}
+    protected:
         struct Node;
-        Node *__new_node(_Tp);
-		void __delete_node(Node*);
 
-	public:
-
-		friend class link_cut_tree<_Tp,_Func,_Alloc>;
 		typedef _Tp value_type;
 		typedef _Func func_type;
 		typedef _Alloc alloc_type;
@@ -40,16 +36,36 @@ class LCT_splay
         typedef typename std::allocator_traits<_Alloc> alloc_traits_type;
 	#endif
 
-	private:
-
 	#if __cplusplus>=201103L
         typedef typename alloc_traits_type::template rebind_traits<Node> node_alloc_traits_type;
+        typedef typename alloc_traits_type::template rebind_traits<Node*> node_ptr_alloc_traits_type;
         typedef typename node_alloc_traits_type::allocator_type node_alloc_type;
+        typedef typename node_ptr_alloc_traits_type::allocator_type node_ptr_alloc_type;
     #else
 		typedef typename _Alloc::template rebind<Node>::other node_alloc_type;
+        typedef typename _Alloc::template rebind<Node*>::other node_ptr_alloc_type;
     #endif
 
 		node_alloc_type __alloc;
+        std::vector<Node*,node_ptr_alloc_type> __node_list;
+
+
+		LCT_splay():
+            __alloc(),
+            __node_list()
+        {}
+        ~LCT_splay()
+        {
+            for(typename std::vector<Node*,node_ptr_alloc_type>::iterator
+                    iter=__node_list.begin();
+                    iter!=__node_list.end();
+                    ++iter)
+            {
+                __delete_node(*iter);
+            }
+        }
+        Node *__new_node(_Tp);
+		void __delete_node(Node*);
 };
 
 template<typename _Tp,typename _Func,typename _Alloc>
@@ -182,6 +198,7 @@ LCT_splay<_Tp,_Func,_Alloc>::__new_node(_Tp __val)
     ptr=__alloc.allocate(1);
 	__alloc.construct(ptr,Node(__val));
 #endif
+    __node_list.push_back(ptr);
 	return ptr;
 }
 
@@ -226,7 +243,6 @@ class link_cut_tree:private __tree_base::LCT_splay<_Tp,_Func,_Alloc>
         struct iterator;
 
         iterator make_node(_Tp);
-		bool erase_node(iterator);
         bool link(iterator,iterator);
         bool cut(iterator,iterator);
         std::pair<_Tp,bool> query(iterator,iterator);
@@ -305,18 +321,9 @@ typename
 link_cut_tree<_Tp,_Func,_Alloc>::iterator
 link_cut_tree<_Tp,_Func,_Alloc>::make_node(_Tp Value)
 {
-    iterator res(__tree_base::LCT_splay<_Tp,_Func,_Alloc>::__new_node(Value));
+    Node *new_ptr=__tree_base::LCT_splay<_Tp,_Func,_Alloc>::__new_node(Value);
+    iterator res(new_ptr);
     return res;
-}
-
-template<typename _Tp,typename _Func,typename _Alloc>
-bool
-link_cut_tree<_Tp,_Func,_Alloc>::erase_node(iterator Iterator)
-{
-	Node *ptr=Iterator.ptr;
-	if(ptr==nullptr)return false;
-    __tree_base::LCT_splay<_Tp,_Func,_Alloc>::__delete_node(ptr);
-	return true;
 }
 
 template<typename _Tp,typename _Func,typename _Alloc>
