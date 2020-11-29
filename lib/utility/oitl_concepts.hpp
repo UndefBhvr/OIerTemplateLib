@@ -37,6 +37,15 @@ concept ordered_associative_container_general_constraint=
 	&&std::relation<_Cmp,_Tp,_Tp>
 	&&allocator_of_type<_Alloc,_Tp>;
 
+template<typename _Tp,typename _Func,typename _Alloc>
+concept interval_calculating_container_general_constraint=
+	std::movable<_Tp>
+	&&allocator_of_type<_Alloc,_Tp>
+    &&requires(_Func _fn,_Tp _val)
+        {
+            {_fn(_val,_val)}->std::same_as<_Tp>;
+        };
+
 } // namespace oitl::concepts
 
 } // namespace oitl
