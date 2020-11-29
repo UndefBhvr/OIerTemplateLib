@@ -6,24 +6,43 @@
 #include<memory>
 #include<vector>
 
+#ifndef _OITL_DEPENDENCE_FREE
+	#include"../../utility/oitl_def.hpp"
+	#include"../../utility/oitl_concepts.hpp"
+#else //When you want to use this with dependence on only libstdc++
+	#define _OITL_LANG_VER __cplusplus
+		#ifdef _MSC_VER
+			#undef _OITL_LANG_VER
+            #define _OITL_LANG_VER _MSVC_LANG
+		#endif
+#endif // _OITL_DEPENDENCE_FREE
+
+#ifdef _OITL_CONCEPT_AVAILABLE //The support of concept depends on this macro
+    #define REQUIRES_OITL_TYPE_CONSTRAINT\
+        requires\
+            concepts::interval_calculating_container_general_constraint<_Tp, _Func, _Alloc>
+#else
+    #define REQUIRES_OITL_TYPE_CONSTRAINT
+#endif // _OITL_CONCEPT_AVAILABLE
+
 namespace oitl
 {
 
-#if __cplusplus<201103L
+#if _OITL_LANG_VER<201103L
 	#ifdef nullptr
 		#undef nullptr
 	#endif
 	#define nullptr NULL
 #endif
 
-template<typename _Tp,typename _Func,typename _Alloc>
+template<typename _Tp,typename _Func,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 class link_cut_tree;
 
 
 namespace __tree_base
 {
 
-template<typename _Tp,typename _Func,typename _Alloc>
+template<typename _Tp,typename _Func,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 class LCT_splay
 {
     protected:
@@ -32,11 +51,11 @@ class LCT_splay
 		typedef _Tp value_type;
 		typedef _Func func_type;
 		typedef _Alloc alloc_type;
-	#if __cplusplus>=201103L
+	#if _OITL_LANG_VER>=201103L
         typedef typename std::allocator_traits<_Alloc> alloc_traits_type;
 	#endif
 
-	#if __cplusplus>=201103L
+	#if _OITL_LANG_VER>=201103L
         typedef typename alloc_traits_type::template rebind_traits<Node> node_alloc_traits_type;
         typedef typename alloc_traits_type::template rebind_traits<Node*> node_ptr_alloc_traits_type;
         typedef typename node_alloc_traits_type::allocator_type node_alloc_type;
@@ -68,7 +87,7 @@ class LCT_splay
 		void __delete_node(Node*);
 };
 
-template<typename _Tp,typename _Func,typename _Alloc>
+template<typename _Tp,typename _Func,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 struct LCT_splay<_Tp,_Func,_Alloc>::Node:_Func
 {
     _Tp val,sum;
@@ -103,7 +122,7 @@ struct LCT_splay<_Tp,_Func,_Alloc>::Node:_Func
     void splay();
 };
 
-template<typename _Tp,typename _Func,typename _Alloc>
+template<typename _Tp,typename _Func,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 inline
 void
 LCT_splay<_Tp,_Func,_Alloc>::Node::reverse()
@@ -111,7 +130,7 @@ LCT_splay<_Tp,_Func,_Alloc>::Node::reverse()
     rev=!rev;
 }
 
-template<typename _Tp,typename _Func,typename _Alloc>
+template<typename _Tp,typename _Func,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 inline
 void
 LCT_splay<_Tp,_Func,_Alloc>::Node::push_down()
@@ -123,7 +142,7 @@ LCT_splay<_Tp,_Func,_Alloc>::Node::push_down()
     if(ch[1]!=nullptr)ch[1]->reverse();
 }
 
-template<typename _Tp,typename _Func,typename _Alloc>
+template<typename _Tp,typename _Func,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 void
 LCT_splay<_Tp,_Func,_Alloc>::Node::push_all()
 {
@@ -131,7 +150,7 @@ LCT_splay<_Tp,_Func,_Alloc>::Node::push_all()
     push_down();
 }
 
-template<typename _Tp,typename _Func,typename _Alloc>
+template<typename _Tp,typename _Func,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 inline
 void
 LCT_splay<_Tp,_Func,_Alloc>::Node::maintain()
@@ -141,7 +160,7 @@ LCT_splay<_Tp,_Func,_Alloc>::Node::maintain()
     if(ch[1]!=nullptr)sum=_Func::operator()(sum,ch[1]->sum);
 }
 
-template<typename _Tp,typename _Func,typename _Alloc>
+template<typename _Tp,typename _Func,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 inline
 bool
 LCT_splay<_Tp,_Func,_Alloc>::Node::is_root()
@@ -149,7 +168,7 @@ LCT_splay<_Tp,_Func,_Alloc>::Node::is_root()
     return ftr==nullptr||(ftr->ch[0]!=this&&ftr->ch[1]!=this);
 }
 
-template<typename _Tp,typename _Func,typename _Alloc>
+template<typename _Tp,typename _Func,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 inline
 void
 LCT_splay<_Tp,_Func,_Alloc>::Node::rotate()
@@ -167,7 +186,7 @@ LCT_splay<_Tp,_Func,_Alloc>::Node::rotate()
     maintain();
 }
 
-template<typename _Tp,typename _Func,typename _Alloc>
+template<typename _Tp,typename _Func,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 void
 LCT_splay<_Tp,_Func,_Alloc>::Node::splay()
 {
@@ -185,13 +204,13 @@ LCT_splay<_Tp,_Func,_Alloc>::Node::splay()
     }
 }
 
-template<typename _Tp,typename _Func,typename _Alloc>
+template<typename _Tp,typename _Func,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 typename
 LCT_splay<_Tp,_Func,_Alloc>::Node*
 LCT_splay<_Tp,_Func,_Alloc>::__new_node(_Tp __val)
 {
 	Node *ptr;
-#if __cplusplus>=201103L
+#if _OITL_LANG_VER>=201103L
     ptr=node_alloc_traits_type::allocate(__alloc,1);
 	node_alloc_traits_type::construct(__alloc,ptr,__val);
 #else
@@ -202,11 +221,11 @@ LCT_splay<_Tp,_Func,_Alloc>::__new_node(_Tp __val)
 	return ptr;
 }
 
-template<typename _Tp,typename _Func,typename _Alloc>
+template<typename _Tp,typename _Func,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 void
 LCT_splay<_Tp,_Func,_Alloc>::__delete_node(Node *__ptr)
 {
-#if __cplusplus>=201103L
+#if _OITL_LANG_VER>=201103L
     node_alloc_traits_type::destroy(__alloc,__ptr);
 	node_alloc_traits_type::deallocate(__alloc,__ptr,1);
 #else
@@ -218,7 +237,12 @@ LCT_splay<_Tp,_Func,_Alloc>::__delete_node(Node *__ptr)
 } //namespace __tree_base
 
 
-template<typename _Tp,typename _Func,typename _Alloc=std::allocator<_Tp> >
+template<
+        typename _Tp,
+        typename _Func,
+        typename _Alloc=std::allocator<_Tp>
+        > REQUIRES_OITL_TYPE_CONSTRAINT
+
 class link_cut_tree:private __tree_base::LCT_splay<_Tp,_Func,_Alloc>
 {
     private:
@@ -236,7 +260,7 @@ class link_cut_tree:private __tree_base::LCT_splay<_Tp,_Func,_Alloc>
 		typedef typename splay_base::value_type value_type;
 		typedef typename splay_base::func_type func_type;
 		typedef typename splay_base::alloc_type allocator_type;
-	#if __cplusplus>=201103L
+	#if _OITL_LANG_VER>=201103L
 		typedef typename splay_base::alloc_traits_type allocator_traits_type;
 	#endif
 
@@ -249,7 +273,7 @@ class link_cut_tree:private __tree_base::LCT_splay<_Tp,_Func,_Alloc>
         bool modify(iterator,_Tp);
 };
 
-template<typename _Tp,typename _Func,typename _Alloc>
+template<typename _Tp,typename _Func,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 struct link_cut_tree<_Tp,_Func,_Alloc>::iterator
 {
     private:
@@ -272,7 +296,7 @@ struct link_cut_tree<_Tp,_Func,_Alloc>::iterator
 		}
 };
 
-template<typename _Tp,typename _Func,typename _Alloc>
+template<typename _Tp,typename _Func,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 void
 link_cut_tree<_Tp,_Func,_Alloc>::access(Node* ptr)
 {
@@ -285,7 +309,7 @@ link_cut_tree<_Tp,_Func,_Alloc>::access(Node* ptr)
         }
 }
 
-template<typename _Tp,typename _Func,typename _Alloc>
+template<typename _Tp,typename _Func,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 void
 link_cut_tree<_Tp,_Func,_Alloc>::make_root(Node* ptr)
 {
@@ -294,7 +318,7 @@ link_cut_tree<_Tp,_Func,_Alloc>::make_root(Node* ptr)
     ptr->reverse();
 }
 
-template<typename _Tp,typename _Func,typename _Alloc>
+template<typename _Tp,typename _Func,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 typename
 link_cut_tree<_Tp,_Func,_Alloc>::Node*
 link_cut_tree<_Tp,_Func,_Alloc>::find_root(Node* ptr)
@@ -306,7 +330,7 @@ link_cut_tree<_Tp,_Func,_Alloc>::find_root(Node* ptr)
     return ptr;
 }
 
-template<typename _Tp,typename _Func,typename _Alloc>
+template<typename _Tp,typename _Func,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 bool
 link_cut_tree<_Tp,_Func,_Alloc>::split(Node* first_ptr,Node* second_ptr)
 {
@@ -316,7 +340,7 @@ link_cut_tree<_Tp,_Func,_Alloc>::split(Node* first_ptr,Node* second_ptr)
     return 1;
 }
 
-template<typename _Tp,typename _Func,typename _Alloc>
+template<typename _Tp,typename _Func,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 typename
 link_cut_tree<_Tp,_Func,_Alloc>::iterator
 link_cut_tree<_Tp,_Func,_Alloc>::make_node(_Tp Value)
@@ -326,7 +350,7 @@ link_cut_tree<_Tp,_Func,_Alloc>::make_node(_Tp Value)
     return res;
 }
 
-template<typename _Tp,typename _Func,typename _Alloc>
+template<typename _Tp,typename _Func,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 bool
 link_cut_tree<_Tp,_Func,_Alloc>::link(iterator First_iter,iterator Second_iter)
 {
@@ -338,7 +362,7 @@ link_cut_tree<_Tp,_Func,_Alloc>::link(iterator First_iter,iterator Second_iter)
     return true;
 }
 
-template<typename _Tp,typename _Func,typename _Alloc>
+template<typename _Tp,typename _Func,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 bool
 link_cut_tree<_Tp,_Func,_Alloc>::cut(iterator First_iter,iterator Second_iter)
 {
@@ -355,7 +379,7 @@ link_cut_tree<_Tp,_Func,_Alloc>::cut(iterator First_iter,iterator Second_iter)
     return true;
 }
 
-template<typename _Tp,typename _Func,typename _Alloc>
+template<typename _Tp,typename _Func,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 std::pair<_Tp,bool>
 link_cut_tree<_Tp,_Func,_Alloc>::query(iterator First_iter,iterator Second_iter)
 {
@@ -368,7 +392,7 @@ link_cut_tree<_Tp,_Func,_Alloc>::query(iterator First_iter,iterator Second_iter)
     return std::make_pair(second_ptr->sum,true);
 }
 
-template<typename _Tp,typename _Func,typename _Alloc>
+template<typename _Tp,typename _Func,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 bool
 link_cut_tree<_Tp,_Func,_Alloc>::modify(iterator Iterator,_Tp Value)
 {
@@ -380,7 +404,7 @@ link_cut_tree<_Tp,_Func,_Alloc>::modify(iterator Iterator,_Tp Value)
     return true;
 }
 
-#if __cplusplus<201103L
+#if _OITL_LANG_VER<201103L
 	#undef nullptr
 #endif
 
