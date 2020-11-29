@@ -11,8 +11,23 @@
 #endif
 
 #ifndef _OITL_DEPENDENCE_FREE
+	#include"../../utility/oitl_def.hpp"
 	#include"../../utility/oitl_concepts.hpp"
-#endif
+#else //When you want to use this with dependence on only libstdc++
+	#define _OITL_LANG_VER __cplusplus
+		#ifdef _MSC_VER
+			#undef _OITL_LANG_VER
+            #define _OITL_LANG_VER _MSVC_LANG
+		#endif
+#endif // _OITL_DEPENDENCE_FREE
+
+#ifdef _OITL_CONCEPT_AVAILABLE //The support of concept depends on this macro
+    #define REQUIRES_OITL_TYPE_CONSTRAINT\
+        requires\
+            concepts::ordered_associative_container_general_constraint<_Tp, _Cmp, _Alloc>
+#else
+    #define REQUIRES_OITL_TYPE_CONSTRAINT
+#endif // _OITL_CONCEPT_AVAILABLE
 
 namespace oitl
 {
@@ -37,12 +52,7 @@ template<
     typename _Tp,
     typename _Cmp=std::less<_Tp>,
     typename _Alloc=std::allocator<_Tp> 
-    >
-
-#ifdef _OITL_CONCEPT_AVAILABLE
-	requires
-		concepts::ordered_associative_container_general_constraint<_Tp,_Cmp,_Alloc>
-#endif
+    > REQUIRES_OITL_TYPE_CONSTRAINT
 
 class
 treap:_Cmp
@@ -113,7 +123,7 @@ treap:_Cmp
         size_type size()const;
 };
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 struct treap<_Tp,_Cmp,_Alloc>::Node
 {
     _Tp value;
@@ -177,7 +187,7 @@ struct treap<_Tp,_Cmp,_Alloc>::Node
 	}
 };
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 inline
 typename treap<_Tp,_Cmp,_Alloc>::Node*
 treap<_Tp,_Cmp,_Alloc>::__get_new_node()
@@ -192,7 +202,7 @@ treap<_Tp,_Cmp,_Alloc>::__get_new_node()
     return new_ptr;
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 inline
 typename treap<_Tp,_Cmp,_Alloc>::Node*
 treap<_Tp,_Cmp,_Alloc>::__get_new_node(_Tp __value)
@@ -207,7 +217,7 @@ treap<_Tp,_Cmp,_Alloc>::__get_new_node(_Tp __value)
     return new_ptr;
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 inline
 void
 treap<_Tp,_Cmp,_Alloc>::__delete_node(Node *__ptr)
@@ -221,7 +231,7 @@ treap<_Tp,_Cmp,_Alloc>::__delete_node(Node *__ptr)
 #endif
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 typename treap<_Tp,_Cmp,_Alloc>::Node*
 treap<_Tp,_Cmp,_Alloc>::merge(Node *lef_tree,Node *rig_tree)
 {
@@ -241,7 +251,7 @@ treap<_Tp,_Cmp,_Alloc>::merge(Node *lef_tree,Node *rig_tree)
     }
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 void
 treap<_Tp,_Cmp,_Alloc>::split_val(Node *subtree_root,const _Tp &val,Node *&lef_tree,Node *&rig_tree)
 {
@@ -264,7 +274,7 @@ treap<_Tp,_Cmp,_Alloc>::split_val(Node *subtree_root,const _Tp &val,Node *&lef_t
     subtree_root->maintain();
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 void
 treap<_Tp,_Cmp,_Alloc>::split_val_equal(Node *subtree_root,const _Tp &val,Node *&lef_tree,Node *&rig_tree)
 {
@@ -287,7 +297,7 @@ treap<_Tp,_Cmp,_Alloc>::split_val_equal(Node *subtree_root,const _Tp &val,Node *
     subtree_root->maintain();
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 struct treap<_Tp,_Cmp,_Alloc>::_const_iterator
 {
 		friend class treap<_Tp,_Cmp,_Alloc>;
@@ -366,7 +376,7 @@ struct treap<_Tp,_Cmp,_Alloc>::_const_iterator
         }
 };
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 inline
 unsigned long
 treap<_Tp,_Cmp,_Alloc>::get_pri()
@@ -383,7 +393,7 @@ treap<_Tp,_Cmp,_Alloc>::get_pri()
 #endif
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 void
 treap<_Tp,_Cmp,_Alloc>::destroy_inner_nodes(Node *ptr)
 {
@@ -393,13 +403,13 @@ treap<_Tp,_Cmp,_Alloc>::destroy_inner_nodes(Node *ptr)
     __delete_node(ptr);
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 treap<_Tp,_Cmp,_Alloc>::~treap()
 {
 	destroy_inner_nodes(end_node);
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 std::pair<typename treap<_Tp,_Cmp,_Alloc>::const_iterator,bool>
 treap<_Tp,_Cmp,_Alloc>::insert(const _Tp& Value)
 {
@@ -422,7 +432,7 @@ treap<_Tp,_Cmp,_Alloc>::insert(const _Tp& Value)
     return std::make_pair(const_iterator(new_ptr),true);
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 bool
 treap<_Tp,_Cmp,_Alloc>::erase(const _Tp& Value)
 {
@@ -444,14 +454,14 @@ treap<_Tp,_Cmp,_Alloc>::erase(const _Tp& Value)
     return true;
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 void
 treap<_Tp,_Cmp,_Alloc>::clear()
 {
     destroy_inner_nodes(root);
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 typename treap<_Tp,_Cmp,_Alloc>::const_iterator
 treap<_Tp,_Cmp,_Alloc>::begin()const
 {
@@ -461,14 +471,14 @@ treap<_Tp,_Cmp,_Alloc>::begin()const
     return const_iterator(now);
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 typename treap<_Tp,_Cmp,_Alloc>::const_iterator
 treap<_Tp,_Cmp,_Alloc>::end()const
 {
     return const_iterator(end_node);
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 typename treap<_Tp,_Cmp,_Alloc>::const_iterator
 treap<_Tp,_Cmp,_Alloc>::find(const _Tp& Value)const
 {
@@ -482,7 +492,7 @@ treap<_Tp,_Cmp,_Alloc>::find(const _Tp& Value)const
     return const_iterator(end_node);
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 typename treap<_Tp,_Cmp,_Alloc>::const_iterator
 treap<_Tp,_Cmp,_Alloc>::lower_bound(const _Tp& Value)const
 {
@@ -503,7 +513,7 @@ treap<_Tp,_Cmp,_Alloc>::lower_bound(const _Tp& Value)const
     return const_iterator(ans);
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 typename treap<_Tp,_Cmp,_Alloc>::const_iterator
 treap<_Tp,_Cmp,_Alloc>::upper_bound(const _Tp& Value)const
 {
@@ -524,7 +534,7 @@ treap<_Tp,_Cmp,_Alloc>::upper_bound(const _Tp& Value)const
     return const_iterator(ans);
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 typename treap<_Tp,_Cmp,_Alloc>::const_iterator
 treap<_Tp,_Cmp,_Alloc>::find_by_order(const size_type& Order)const
 {
@@ -548,7 +558,7 @@ treap<_Tp,_Cmp,_Alloc>::find_by_order(const size_type& Order)const
     return const_iterator(ans);
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 typename treap<_Tp,_Cmp,_Alloc>::size_type
 treap<_Tp,_Cmp,_Alloc>::order_of_key(const _Tp& Value)const
 {
@@ -571,7 +581,7 @@ treap<_Tp,_Cmp,_Alloc>::order_of_key(const _Tp& Value)const
     return ans;
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 typename treap<_Tp,_Cmp,_Alloc>::size_type
 treap<_Tp,_Cmp,_Alloc>::size()const
 {
