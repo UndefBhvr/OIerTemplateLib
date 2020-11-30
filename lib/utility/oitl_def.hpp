@@ -1,6 +1,10 @@
 #if defined(__GNUC__)
 	#define _OITL_LANG_VER __cplusplus
-	#define _OITL_CONCEPT_LIMIT 201907L
+	#if __GNUC__>=10
+		#define _OITL_CONCEPT_LIMIT 201907L
+	#else
+		#define _OITL_CONCEPT_LIMIT 0x7FFFFFFFL
+	#endif
 
 #elif defined(_MSC_VER)
 	#define _OITL_LANG_VER _MSVC_LANG
