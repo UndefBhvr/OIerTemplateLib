@@ -6,7 +6,7 @@
 #include<utility>
 #include<functional>
 
-#if __cplusplus>=201103L
+#if _OITL_LANG_VER>=201103L
 #include<random>
 #endif
 
@@ -32,7 +32,7 @@
 namespace oitl
 {
 
-#if __cplusplus<201103L
+#if _OITL_LANG_VER<201103L
 	#ifdef nullptr
 		#undef nullptr
 	#endif
@@ -63,7 +63,7 @@ treap:_Cmp
         typedef _Cmp Comparator_type;
         typedef size_t size_type;
         typedef _Alloc allocator_type;
-	#if __cplusplus>=201103L
+	#if _OITL_LANG_VER>=201103L
         typedef typename std::allocator_traits<_Alloc> alloc_traits_type;
 	#endif
 
@@ -85,7 +85,7 @@ treap:_Cmp
 		inline static unsigned long get_pri();
 		void destroy_inner_nodes(Node*);
 
-	#if __cplusplus>=201103L
+	#if _OITL_LANG_VER>=201103L
         typedef typename alloc_traits_type::template rebind_traits<Node> _node_alloc_traits_type;
         typedef typename _node_alloc_traits_type::allocator_type _node_alloc_type;
     #else
@@ -192,7 +192,7 @@ inline
 typename treap<_Tp,_Cmp,_Alloc>::Node*
 treap<_Tp,_Cmp,_Alloc>::__get_new_node()
 {
-#if __cplusplus>=201103L
+#if _OITL_LANG_VER>=201103L
     Node *new_ptr=_node_alloc_traits_type::allocate(_node_allocator,1);
     _node_alloc_traits_type::construct(_node_allocator,new_ptr);
 #else
@@ -207,7 +207,7 @@ inline
 typename treap<_Tp,_Cmp,_Alloc>::Node*
 treap<_Tp,_Cmp,_Alloc>::__get_new_node(_Tp __value)
 {
-#if __cplusplus>=201103L
+#if _OITL_LANG_VER>=201103L
     Node *new_ptr=_node_alloc_traits_type::allocate(_node_allocator,1);
     _node_alloc_traits_type::construct(_node_allocator,new_ptr,__value);
 #else
@@ -222,7 +222,7 @@ inline
 void
 treap<_Tp,_Cmp,_Alloc>::__delete_node(Node *__ptr)
 {
-#if __cplusplus>=201103L
+#if _OITL_LANG_VER>=201103L
     _node_alloc_traits_type::destroy(_node_allocator,__ptr);
     _node_alloc_traits_type::deallocate(_node_allocator,__ptr,1);
 #else
@@ -381,7 +381,7 @@ inline
 unsigned long
 treap<_Tp,_Cmp,_Alloc>::get_pri()
 {
-#if __cplusplus>=201103L
+#if _OITL_LANG_VER>=201103L
     static std::mt19937 rand_mker;
 	return rand_mker();
 #else
@@ -589,7 +589,7 @@ treap<_Tp,_Cmp,_Alloc>::size()const
     return root->s;
 }
 
-#if __cplusplus<201103L
+#if _OITL_LANG_VER<201103L
 	#undef nullptr
 #endif
 
