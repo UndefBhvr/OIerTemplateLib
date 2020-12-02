@@ -1,14 +1,10 @@
-#ifndef _OITL_DATA_STRUCTURE_BALANCED_TREE_TREAP_HPP
-#define _OITL_DATA_STRUCTURE_BALANCED_TREE_TREAP_HPP //C++ Header treap.hpp
+#ifndef _OITL_DATA_STRUCTURE_BALANCED_TREE_SET_HPP
+#define _OITL_DATA_STRUCTURE_BALANCED_TREE_SET_HPP //C++ Header set.hpp
 
 #include<cstdlib>
 #include<memory>
 #include<utility>
 #include<functional>
-
-#if _OITL_LANG_VER>=201103L
-#include<random>
-#endif
 
 #ifndef _OITL_DEPENDENCE_FREE
 	#include"../../utility/oitl_def.hpp"
@@ -29,8 +25,20 @@
     #define REQUIRES_OITL_TYPE_CONSTRAINT
 #endif // _OITL_CONCEPT_AVAILABLE
 
+
+#if _OITL_LANG_VER>=201103L
+	#include<random>
+#endif
+
 namespace oitl
 {
+
+
+
+namespace __set_impl
+{
+
+
 
 #if _OITL_LANG_VER<201103L
 	#ifdef nullptr
@@ -50,8 +58,8 @@ namespace oitl
 
 template<
     typename _Tp,
-    typename _Cmp=std::less<_Tp>,
-    typename _Alloc=std::allocator<_Tp> 
+    typename _Cmp,
+    typename _Alloc
     > REQUIRES_OITL_TYPE_CONSTRAINT
 
 class
@@ -59,12 +67,14 @@ treap:_Cmp
 {
     public:
 
-        typedef _Tp Value_type;
-        typedef _Cmp Comparator_type;
-        typedef size_t size_type;
-        typedef _Alloc allocator_type;
+      	typedef _Tp key_type;
+      	typedef _Tp value_type;
+      	typedef _Cmp key_compare;
+      	typedef _Cmp value_compare;
+     	typedef _Alloc allocator_type;
+		typedef std::size_t size_type;
 	#if _OITL_LANG_VER>=201103L
-        typedef typename std::allocator_traits<_Alloc> alloc_traits_type;
+        typedef typename std::allocator_traits<_Alloc> allocator_traits_type;
 	#endif
 
     private:
@@ -75,7 +85,6 @@ treap:_Cmp
 
         inline Node *__get_new_node();
         inline Node *__get_new_node(_Tp);
-        inline void __emplace_node(Node*,_Tp);
         inline void __delete_node(Node*);
 
         Node *merge(Node*,Node*);
@@ -86,7 +95,7 @@ treap:_Cmp
 		void destroy_inner_nodes(Node*);
 
 	#if _OITL_LANG_VER>=201103L
-        typedef typename alloc_traits_type::template rebind_traits<Node> _node_alloc_traits_type;
+        typedef typename allocator_traits_type::template rebind_traits<Node> _node_alloc_traits_type;
         typedef typename _node_alloc_traits_type::allocator_type _node_alloc_type;
     #else
 		typedef typename _Alloc::template rebind<Node>::other _node_alloc_type;
@@ -110,7 +119,7 @@ treap:_Cmp
 
 		~treap();
 
-        std::pair<const_iterator,bool> insert(const _Tp&);
+        const_iterator insert(_Tp);
         bool erase(const _Tp&);
 		void clear();
         const_iterator begin()const;
@@ -410,10 +419,10 @@ treap<_Tp,_Cmp,_Alloc>::~treap()
 }
 
 template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
-std::pair<typename treap<_Tp,_Cmp,_Alloc>::const_iterator,bool>
-treap<_Tp,_Cmp,_Alloc>::insert(const _Tp& Value)
+typename
+treap<_Tp,_Cmp,_Alloc>::const_iterator
+treap<_Tp,_Cmp,_Alloc>::insert(_Tp Value)
 {
-    if(find(Value)!=end())return std::make_pair(end(),false);
     Node *ptr=root,*last=end_node;
     Node *new_ptr=__get_new_node(Value);
     bool is_lc=true;
@@ -429,14 +438,14 @@ treap<_Tp,_Cmp,_Alloc>::insert(const _Tp& Value)
     if(is_lc)last->lc=new_ptr;
     else last->rc=new_ptr;
     last->maintain();
-    return std::make_pair(const_iterator(new_ptr),true);
+    return const_iterator(new_ptr);
 }
 
 template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 bool
 treap<_Tp,_Cmp,_Alloc>::erase(const _Tp& Value)
 {
-    if(find(Value)==end())return false;
+	if(find(Value)==end())return false;
     Node *ptr=root;
     bool is_lc=true;
     while(1)
@@ -482,21 +491,27 @@ template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAI
 typename treap<_Tp,_Cmp,_Alloc>::const_iterator
 treap<_Tp,_Cmp,_Alloc>::find(const _Tp& Value)const
 {
-    Node *now=root;
+    Node *now=root,*res=end_node;
     while(now!=nullptr)
     {
-        if(_Cmp::operator()(Value,now->value))now=now->lc;
-        else if(_Cmp::operator()(now->value,Value))now=now->rc;
-        else return const_iterator(now);
+        if(_Cmp::operator()(now->value,Value))
+		{
+			now=now->rc;
+		}
+        else
+		{
+			if(!_Cmp::operator()(Value,now->value))res=now;
+        	now=now->lc;
+		}
     }
-    return const_iterator(end_node);
+    return const_iterator(res);
 }
 
 template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 typename treap<_Tp,_Cmp,_Alloc>::const_iterator
 treap<_Tp,_Cmp,_Alloc>::lower_bound(const _Tp& Value)const
 {
-    Node *now=root,*ans=nullptr;
+    Node *now=root,*ans=end_node;
     while(now!=nullptr)
     {
         if(!_Cmp::operator()(now->value,Value))
@@ -509,7 +524,6 @@ treap<_Tp,_Cmp,_Alloc>::lower_bound(const _Tp& Value)const
             now=now->rc;
         }
     }
-    if(ans==nullptr)ans=end_node;
     return const_iterator(ans);
 }
 
@@ -517,7 +531,7 @@ template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAI
 typename treap<_Tp,_Cmp,_Alloc>::const_iterator
 treap<_Tp,_Cmp,_Alloc>::upper_bound(const _Tp& Value)const
 {
-    Node *now=root,*ans=nullptr;
+    Node *now=root,*ans=end_node;
     while(now!=nullptr)
     {
         if(_Cmp::operator()(Value,now->value))
@@ -530,7 +544,6 @@ treap<_Tp,_Cmp,_Alloc>::upper_bound(const _Tp& Value)const
             now=now->rc;
         }
     }
-    if(ans==nullptr)ans=end_node;
     return const_iterator(ans);
 }
 
@@ -593,6 +606,61 @@ treap<_Tp,_Cmp,_Alloc>::size()const
 	#undef nullptr
 #endif
 
+
+
+} //namespace oitl::__set_impl
+
+
+
+template<typename _Tp,typename _Cmp=std::less<_Tp>,typename _Alloc=std::allocator<_Tp> >
+class multiset:public __set_impl::treap<_Tp,_Cmp,_Alloc>
+{
+	public:
+		typedef typename __set_impl::treap<_Tp,_Cmp,_Alloc>::key_type key_type;
+      	typedef typename __set_impl::treap<_Tp,_Cmp,_Alloc>::value_type value_type;
+      	typedef typename __set_impl::treap<_Tp,_Cmp,_Alloc>::key_compare key_compare;
+      	typedef typename __set_impl::treap<_Tp,_Cmp,_Alloc>::value_compare value_compare;
+     	typedef typename __set_impl::treap<_Tp,_Cmp,_Alloc>::allocator_type allocator_type;
+		typedef typename __set_impl::treap<_Tp,_Cmp,_Alloc>::size_type size_type;
+	#if _OITL_LANG_VER>=201103L
+        typedef typename __set_impl::treap<_Tp,_Cmp,_Alloc>::allocator_traits_type allocator_traits_type;
+	#endif
+		typedef typename __set_impl::treap<_Tp,_Cmp,_Alloc>::iterator iterator;
+		typedef typename __set_impl::treap<_Tp,_Cmp,_Alloc>::const_iterator const_iterator;
+};
+
+template<typename _Tp,typename _Cmp=std::less<_Tp>,typename _Alloc=std::allocator<_Tp> >
+class set:public oitl::__set_impl::treap<_Tp,_Cmp,_Alloc>
+{
+	public:
+		typedef typename __set_impl::treap<_Tp,_Cmp,_Alloc>::key_type key_type;
+      	typedef typename __set_impl::treap<_Tp,_Cmp,_Alloc>::value_type value_type;
+      	typedef typename __set_impl::treap<_Tp,_Cmp,_Alloc>::key_compare key_compare;
+      	typedef typename __set_impl::treap<_Tp,_Cmp,_Alloc>::value_compare value_compare;
+     	typedef typename __set_impl::treap<_Tp,_Cmp,_Alloc>::allocator_type allocator_type;
+		typedef typename __set_impl::treap<_Tp,_Cmp,_Alloc>::size_type size_type;
+	#if _OITL_LANG_VER>=201103L
+        typedef typename __set_impl::treap<_Tp,_Cmp,_Alloc>::allocator_traits_type allocator_traits_type;
+	#endif
+		typedef typename __set_impl::treap<_Tp,_Cmp,_Alloc>::iterator iterator;
+		typedef typename __set_impl::treap<_Tp,_Cmp,_Alloc>::const_iterator const_iterator;
+
+		std::pair<const_iterator,bool> insert(_Tp);
+};
+
+template<typename _Tp,typename _Cmp,typename _Alloc>
+std::pair<typename set<_Tp,_Cmp,_Alloc>::const_iterator,bool>
+set<_Tp,_Cmp,_Alloc>::insert(_Tp _Value)
+{
+	if(__set_impl::treap<_Tp,_Cmp,_Alloc>::find(_Value)
+		!=__set_impl::treap<_Tp,_Cmp,_Alloc>::end())
+	{
+		return std::make_pair(__set_impl::treap<_Tp,_Cmp,_Alloc>::end(),false);
+	}
+	return std::make_pair(__set_impl::treap<_Tp,_Cmp,_Alloc>::insert(_Value),true);
+}
+
+
 } //namespace oitl
 
-#endif //C++ Header treap.hpp
+#endif //C++ Header set.hpp
