@@ -429,9 +429,17 @@ treap<_Tp,_Cmp,_Alloc>::insert(_Tp Value)
     while(ptr!=NULL&&ptr->pri>new_ptr->pri)
     {
         ++ptr->s;
-        last=ptr;
-        if(_Cmp::operator()(Value,ptr->value))ptr=ptr->lc,is_lc=true;
-        else if(_Cmp::operator()(ptr->value,Value))ptr=ptr->rc,is_lc=false;
+        if(_Cmp::operator()(Value,ptr->value))
+        {
+            last=ptr;
+            ptr=ptr->lc,is_lc=true;
+        }
+        else if(_Cmp::operator()(ptr->value,Value))
+        {
+            last=ptr;
+            ptr=ptr->rc,is_lc=false;
+        }
+        else break;
     }
     split_val(ptr,Value,new_ptr->lc,new_ptr->rc);
     new_ptr->maintain();
