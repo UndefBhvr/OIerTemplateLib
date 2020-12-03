@@ -1,3 +1,4 @@
+#define NDEBUG
 #include"../lib/data_structure/balanced_tree/set.hpp"
 #include"safe_allocator.hpp"
 #include<ctime>

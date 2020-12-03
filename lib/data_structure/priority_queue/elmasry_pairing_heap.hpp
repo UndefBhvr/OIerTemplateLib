@@ -5,9 +5,24 @@
 #include<set>
 #include<queue>
 
-#ifndef _OITL_DEPENDENCE_FREE
+#if defined(__has_include) && __has_include("../../utility/oitl_def.hpp")
+	#include"../../utility/oitl_def.hpp"
 	#include"../../utility/oitl_concepts.hpp"
-#endif
+#else //When you want to use this with dependence on only libstdc++
+	#define _OITL_LANG_VER __cplusplus
+	#ifdef _MSC_VER
+		#undef _OITL_LANG_VER
+        #define _OITL_LANG_VER _MSVC_LANG
+	#endif
+#endif // __has_include the necessary headers
+
+#ifdef _OITL_CONCEPT_AVAILABLE //The support of concept depends on this macro
+    #define REQUIRES_OITL_TYPE_CONSTRAINT\
+        requires\
+            concepts::ordered_associative_container_general_constraint<_Tp, _Cmp, _Alloc>
+#else
+    #define REQUIRES_OITL_TYPE_CONSTRAINT
+#endif // _OITL_CONCEPT_AVAILABLE
 
 namespace oitl
 {
@@ -33,13 +48,7 @@ template<
 	typename _Tp,
 	typename _Cmp=std::less<_Tp>,
 	typename _Alloc=std::allocator<_Tp>
-	>
-
-#ifdef _OITL_CONCEPT_AVAILABLE
-	requires
-		concepts::ordered_associative_container_general_constraint<_Tp,_Cmp,_Alloc>
-#endif
-
+	> REQUIRES_OITL_TYPE_CONSTRAINT
 class
 elmasry_pairing_heap:private _Cmp
 {
@@ -113,7 +122,7 @@ elmasry_pairing_heap:private _Cmp
 };
 
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 struct elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::Node
 {
 	_Tp val;
@@ -128,7 +137,7 @@ struct elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::Node
 	}
 };
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 struct elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::_const_iterator
 {
     private:
@@ -150,7 +159,7 @@ struct elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::_const_iterator
 		}
 };
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 inline
 typename
 elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::Node*
@@ -166,7 +175,7 @@ elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::__get_node(_Tp __value)
     return new_ptr;
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 inline
 void
 elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::__delete_node(Node *__ptr)
@@ -180,7 +189,7 @@ elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::__delete_node(Node *__ptr)
 #endif
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 void
 elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::__clear()
 {
@@ -191,7 +200,7 @@ elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::__clear()
 	tree_pool_mem.clear();
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 void
 elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::move(elmasry_pairing_heap &other)
 {
@@ -203,7 +212,7 @@ elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::move(elmasry_pairing_heap &other)
 	other.__clear();
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 void
 elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::push_to_tree_pool(Node *ptr)
 {
@@ -217,7 +226,7 @@ elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::push_to_tree_pool(Node *ptr)
 }
 
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 typename
 elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::Node*
 elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::link(Node *l,Node *r)
@@ -232,7 +241,7 @@ elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::link(Node *l,Node *r)
     return l;
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 typename
 elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::Node*
 elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::two_pass(Node *head)
@@ -247,7 +256,7 @@ elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::two_pass(Node *head)
     return link(link(head,other),two_pass(rest));
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 typename
 elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::Node*
 elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::multi_pass(Node *head)
@@ -276,7 +285,7 @@ elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::multi_pass(Node *head)
     return res;
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 void
 elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::combine()
 {
@@ -306,7 +315,7 @@ elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::combine()
 	top_node=tree_pool;
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 typename
 elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::iterator
 elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::push(_Tp Value)
@@ -320,7 +329,7 @@ elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::push(_Tp Value)
     return iterator(ptr);
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 void
 elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::pop()
 {
@@ -350,14 +359,14 @@ elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::pop()
     __delete_node(dead_node);
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 const _Tp&
 elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::top()const
 {
     return top_node->val;
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 void
 elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::modify(const iterator& Iterator,_Tp Value)
 {
@@ -400,7 +409,7 @@ elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::modify(const iterator& Iterator,_Tp Value
 	push_to_tree_pool(ptr);
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 void
 elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::join(elmasry_pairing_heap &Other_heap)
 {
@@ -423,7 +432,7 @@ elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::join(elmasry_pairing_heap &Other_heap)
 	}
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 typename
 elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::size_type
 elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::size()const
@@ -431,7 +440,7 @@ elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::size()const
 	return _size;
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 bool
 elmasry_pairing_heap<_Tp,_Cmp,_Alloc>::empty()const
 {

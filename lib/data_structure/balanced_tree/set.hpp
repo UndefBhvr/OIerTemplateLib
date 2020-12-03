@@ -6,16 +6,16 @@
 #include<utility>
 #include<functional>
 
-#ifndef _OITL_DEPENDENCE_FREE
+#if defined(__has_include) && __has_include("../../utility/oitl_def.hpp")
 	#include"../../utility/oitl_def.hpp"
 	#include"../../utility/oitl_concepts.hpp"
 #else //When you want to use this with dependence on only libstdc++
 	#define _OITL_LANG_VER __cplusplus
-		#ifdef _MSC_VER
-			#undef _OITL_LANG_VER
-            #define _OITL_LANG_VER _MSVC_LANG
-		#endif
-#endif // _OITL_DEPENDENCE_FREE
+	#ifdef _MSC_VER
+		#undef _OITL_LANG_VER
+        #define _OITL_LANG_VER _MSVC_LANG
+	#endif
+#endif // __has_include the necessary headers
 
 #ifdef _OITL_CONCEPT_AVAILABLE //The support of concept depends on this macro
     #define REQUIRES_OITL_TYPE_CONSTRAINT\

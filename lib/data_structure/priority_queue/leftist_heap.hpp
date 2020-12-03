@@ -6,9 +6,24 @@
 #include<utility>
 #include<functional>
 
-#ifndef _OITL_DEPENDENCE_FREE
+#if defined(__has_include) && __has_include("../../utility/oitl_def.hpp")
+	#include"../../utility/oitl_def.hpp"
 	#include"../../utility/oitl_concepts.hpp"
-#endif
+#else //When you want to use this with dependence on only libstdc++
+	#define _OITL_LANG_VER __cplusplus
+	#ifdef _MSC_VER
+		#undef _OITL_LANG_VER
+        #define _OITL_LANG_VER _MSVC_LANG
+	#endif
+#endif // __has_include the necessary headers
+
+#ifdef _OITL_CONCEPT_AVAILABLE //The support of concept depends on this macro
+    #define REQUIRES_OITL_TYPE_CONSTRAINT\
+        requires\
+            concepts::ordered_associative_container_general_constraint<_Tp, _Cmp, _Alloc>
+#else
+    #define REQUIRES_OITL_TYPE_CONSTRAINT
+#endif // _OITL_CONCEPT_AVAILABLE
 
 namespace oitl
 {
@@ -30,13 +45,7 @@ template<
 	typename _Tp,
 	typename _Cmp=std::less<_Tp>,
 	typename _Alloc=std::allocator<_Tp>
-	>
-
-#ifdef _OITL_CONCEPT_AVAILABLE
-	requires
-		concepts::ordered_associative_container_general_constraint<_Tp,_Cmp,_Alloc>
-#endif
-
+	> REQUIRES_OITL_TYPE_CONSTRAINT
 class
 leftist_heap:_Cmp
 {
@@ -91,7 +100,7 @@ leftist_heap:_Cmp
         size_type size()const;
 };
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 struct leftist_heap<_Tp,_Cmp,_Alloc>::Node
 {
     _Tp val;
@@ -130,7 +139,7 @@ struct leftist_heap<_Tp,_Cmp,_Alloc>::Node
 	}
 };
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 inline
 typename leftist_heap<_Tp,_Cmp,_Alloc>::Node*
 leftist_heap<_Tp,_Cmp,_Alloc>::__get_new_node(_Tp __value)
@@ -145,7 +154,7 @@ leftist_heap<_Tp,_Cmp,_Alloc>::__get_new_node(_Tp __value)
     return new_ptr;
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 inline
 void
 leftist_heap<_Tp,_Cmp,_Alloc>::__delete_node(Node *__ptr)
@@ -159,7 +168,7 @@ leftist_heap<_Tp,_Cmp,_Alloc>::__delete_node(Node *__ptr)
 #endif
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 void
 leftist_heap<_Tp,_Cmp,_Alloc>::destroy_inner_nodes(Node *ptr)
 {
@@ -169,7 +178,7 @@ leftist_heap<_Tp,_Cmp,_Alloc>::destroy_inner_nodes(Node *ptr)
     __delete_node(ptr);
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 typename
 leftist_heap<_Tp,_Cmp,_Alloc>::Node*
 leftist_heap<_Tp,_Cmp,_Alloc>::merge(Node* first_heap,Node* second_heap)
@@ -189,7 +198,7 @@ leftist_heap<_Tp,_Cmp,_Alloc>::merge(Node* first_heap,Node* second_heap)
     return second_heap;
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 void
 leftist_heap<_Tp,_Cmp,_Alloc>::__erase_inner_node(Node* ptr)
 {
@@ -208,7 +217,7 @@ leftist_heap<_Tp,_Cmp,_Alloc>::__erase_inner_node(Node* ptr)
     while(ptr!=nullptr&&ptr->maintain())ptr=ptr->ftr;
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 struct leftist_heap<_Tp,_Cmp,_Alloc>::iterator
 {
     private:
@@ -230,7 +239,7 @@ struct leftist_heap<_Tp,_Cmp,_Alloc>::iterator
 		}
 };
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 typename
 leftist_heap<_Tp,_Cmp,_Alloc>::iterator
 leftist_heap<_Tp,_Cmp,_Alloc>::push(const _Tp& Value)
@@ -241,7 +250,7 @@ leftist_heap<_Tp,_Cmp,_Alloc>::push(const _Tp& Value)
     return iterator(new_node);
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 typename
 leftist_heap<_Tp,_Cmp,_Alloc>::value_type&
 leftist_heap<_Tp,_Cmp,_Alloc>::top()const
@@ -249,7 +258,7 @@ leftist_heap<_Tp,_Cmp,_Alloc>::top()const
     return _root->val;
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 typename
 leftist_heap<_Tp,_Cmp,_Alloc>::iterator
 leftist_heap<_Tp,_Cmp,_Alloc>::pop()
@@ -263,7 +272,7 @@ leftist_heap<_Tp,_Cmp,_Alloc>::pop()
     return iterator(_root);
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 typename
 leftist_heap<_Tp,_Cmp,_Alloc>::iterator
 leftist_heap<_Tp,_Cmp,_Alloc>::join(leftist_heap<_Tp,_Cmp,_Alloc>& Other_heap)
@@ -275,7 +284,7 @@ leftist_heap<_Tp,_Cmp,_Alloc>::join(leftist_heap<_Tp,_Cmp,_Alloc>& Other_heap)
     return iterator(_root);
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 bool
 leftist_heap<_Tp,_Cmp,_Alloc>::modify(const iterator& Iterator,const value_type& Value)
 {
@@ -291,7 +300,7 @@ leftist_heap<_Tp,_Cmp,_Alloc>::modify(const iterator& Iterator,const value_type&
     return true;
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 typename
 leftist_heap<_Tp,_Cmp,_Alloc>::size_type
 leftist_heap<_Tp,_Cmp,_Alloc>::size()const
@@ -299,7 +308,7 @@ leftist_heap<_Tp,_Cmp,_Alloc>::size()const
     return s;
 }
 
-template<typename _Tp,typename _Cmp,typename _Alloc>
+template<typename _Tp,typename _Cmp,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
 bool
 leftist_heap<_Tp,_Cmp,_Alloc>::empty()const
 {
