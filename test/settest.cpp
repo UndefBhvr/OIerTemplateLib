@@ -7,7 +7,7 @@ int main()
 {
 	auto time0=clock();
 	oitl::multiset<int,std::less<int>,oitl_test::safe_allocator<int> > my_set;
-	srand48(time(nullptr));
+	srand(time(nullptr));
 	int test=10000000;
 	while(test--)
 	{
