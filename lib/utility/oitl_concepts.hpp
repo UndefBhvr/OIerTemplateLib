@@ -23,7 +23,6 @@ requires(_Alloc _alloc)
     _alloc.deallocate(nullptr,0ULL);
     {_alloc==_alloc}noexcept->std::same_as<bool>;
     {_alloc!=_alloc}noexcept->std::same_as<bool>;
-    {_Alloc(_alloc)}noexcept;
 };
 
 template<typename _Alloc,typename _Tp>

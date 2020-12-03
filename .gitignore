@@ -1,6 +1,5 @@
 test.cpp
 algotest.cpp
 test.hpp
-test
 *.exe
 *.json
