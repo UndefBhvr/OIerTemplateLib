@@ -5,13 +5,15 @@
 
 int main()
 {
+	size_t test;
+	printf("Please input the times you want to test:");
+	scanf("%zu",&test);
 	auto time0=clock();
 	oitl::multiset<int,std::less<int>,oitl_test::safe_allocator<int> > my_set;
 	srand(time(nullptr));
-	int test=10000000;
 	while(test--)
 	{
-		if(test%1000000==0)printf("%d\n",test/1000000);
+		if(test%1000000==0)printf("Times left: %d millions\n",test/1000000);
 		int a=rand()%6,b=rand()*rand()%20000000;
 		if(a==0)my_set.insert(b);
 		if(my_set.size()==0)continue;
@@ -32,5 +34,5 @@ int main()
 		if(a==5)my_set.upper_bound(b);
 	}
 	auto time1=clock();
-	printf("Program has returned in %lf seconds\n",(time1-time0)*0.000001);
+	printf("Program has returned in %lf seconds\n",(time1-time0)*1./CLOCKS_PER_SEC);
 }
