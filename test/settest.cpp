@@ -12,7 +12,7 @@ int main()
 	while(test--)
 	{
 		if(test%1000000==0)printf("%d\n",test/1000000);
-		int a=rand()%6,b=rand();
+		int a=rand()%6,b=rand()*rand()%20000000;
 		if(a==0)my_set.insert(b);
 		if(my_set.size()==0)continue;
 		if(a==1)
