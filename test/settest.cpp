@@ -13,7 +13,7 @@ int main()
 	srand(time(nullptr));
 	while(test--)
 	{
-		if(test%1000000==0)printf("Times left: %d millions\n",test/1000000);
+		if(test%1000000==0)printf("Times left: %zu millions\n",test/1000000U);
 		int a=rand()%6,b=rand()*rand()%20000000;
 		if(a==0)my_set.insert(b);
 		if(my_set.size()==0)continue;
