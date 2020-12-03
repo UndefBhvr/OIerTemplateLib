@@ -9,7 +9,8 @@ int main()
 	printf("Please input the times you want to test:");
 	scanf("%zu",&test);
 	auto time0=clock();
-	oitl::multiset<int,std::less<int>,oitl_test::safe_allocator<int> > my_set;
+	// oitl::multiset<int,std::less<int>,oitl_test::safe_allocator<int> > my_set;
+	oitl::multiset<int,std::less<int>,std::allocator<int> > my_set;
 	srand(time(nullptr));
 	while(test--)
 	{
