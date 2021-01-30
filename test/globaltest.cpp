@@ -1,8 +1,9 @@
 // #include"lib/utility/oitl_concepts.hpp"
 #include<cstdio>
-#include"lib/data_structure/priority_queue/pairing_heap.hpp"
+//#include"lib/data_structure/priority_queue/pairing_heap.hpp"
 // #include"lib/data_structure/priority_queue/elmasry_pairing_heap.hpp"
 // #include"lib/data_structure/priority_queue/leftist_heap.hpp"
+#include"../lib/data_structure/set.hpp"
 // #include"lib/data_structure/balanced_tree/test.hpp"
 
 #include<cstdio>
@@ -14,72 +15,77 @@
 #include<set>
 
 std::set<int> a;
+oitl_interface::set<int> b;
 
-oitl::pairing_heap<int> heap;
-#include<concepts>
-#include<type_traits>
-
-template<typename _Tp>
-concept is_int=std::same_as<_Tp,int>;
-
-template<typename _Tp>
-_Tp gcd(_Tp a,_Tp b)
-{
-	if(b==0)return a;
-	return gcd(b,a%b);
-}
-
-template<is_int _Tp>
-_Tp gcd(_Tp a,_Tp b)
-{
-	if(b==0)return a;
-	return gcd(b,a%b);
-}
-
-template<typename _Tp>
-struct remove_reference
-{
-	typedef _Tp type;
-};
-
-template<typename _Tp>
-struct remove_reference<_Tp&>
-{
-	typedef _Tp type;
-};
-
-template<typename _Tp>
-struct remove_reference<_Tp&&>
-{
-	typedef _Tp type;
-};
-
-template<typename _Tp>
-using remove_reference_t=remove_reference<_Tp>::type;
-
-template<typename _Tp>
-_Tp&& forward(remove_reference_t<_Tp>& arg)
-{
-	return static_cast<_Tp&&>(arg);
-}
-
-template<typename ..._Args>
-struct value_type_of
-{
-};
+// oitl::pairing_heap<int> heap;
+// #include<concepts>
+// #include<type_traits>
 
 // template<typename _Tp>
-// struct value_type_of<_Tp::value_type>
+// concept is_int=std::same_as<_Tp,int>;
+
+// template<typename _Tp>
+// _Tp gcd(_Tp a,_Tp b)
 // {
-// 	typedef typename _Tp::value_type value_type;
+// 	if(b==0)return a;
+// 	return gcd(b,a%b);
+// }
+
+// template<is_int _Tp>
+// _Tp gcd(_Tp a,_Tp b)
+// {
+// 	if(b==0)return a;
+// 	return gcd(b,a%b);
+// }
+
+// template<typename _Tp>
+// struct remove_reference
+// {
+// 	typedef _Tp type;
+// };
+
+// template<typename _Tp>
+// struct remove_reference<_Tp&>
+// {
+// 	typedef _Tp type;
+// };
+
+// template<typename _Tp>
+// struct remove_reference<_Tp&&>
+// {
+// 	typedef _Tp type;
+// };
+
+// template<typename _Tp>
+// using remove_reference_t=remove_reference<_Tp>::type;
+
+// template<typename _Tp>
+// _Tp&& forward(remove_reference_t<_Tp>& arg)
+// {
+// 	return static_cast<_Tp&&>(arg);
+// }
+
+// template<typename ..._Args>
+// struct value_type_of
+// {
+// };
+
+// // template<typename _Tp>
+// // struct value_type_of<_Tp::value_type>
+// // {
+// // 	typedef typename _Tp::value_type value_type;
 // };
 
 int main()
 {
 	// value_type_of<std::allocator<int> >::type a;
-	printf("__cpp_concepts= %ld\n",__cpp_concepts);
-	// heap.push(3);
-	gcd(3LL,5LL);
+	// printf("__cpp_concepts= %ld\n",__cpp_concepts);
+	// // heap.push(3);
+	// gcd(3LL,5LL);
+	b.insert(3);
+	printf("%d\n",*b.begin());
+	b.clear();
+	puts("End.");
 }
 
 // char gc()
