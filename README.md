@@ -1,3 +1,7 @@
+退役了qwq以后大概维护会很慢了
+
+---
+
 # OIerTemplateLib
 
 ## 关于为什么有了别人的OI WIKI/Template还写这个

@@ -301,12 +301,12 @@ void
 link_cut_tree<_Tp,_Func,_Alloc>::access(Node* ptr)
 {
     for(Node* now_rc_ptr=nullptr;ptr!=nullptr;ptr=ptr->ftr)
-        {
-            ptr->splay();
-            ptr->ch[1]=now_rc_ptr;
-            ptr->maintain();
-			now_rc_ptr=ptr;
-        }
+    {
+        ptr->splay();
+        ptr->ch[1]=now_rc_ptr;
+        ptr->maintain();
+		now_rc_ptr=ptr;
+    }
 }
 
 template<typename _Tp,typename _Func,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRAINT
@@ -325,7 +325,11 @@ link_cut_tree<_Tp,_Func,_Alloc>::find_root(Node* ptr)
 {
     access(ptr);
     ptr->splay();
-    while(ptr->ch[0]!=nullptr)ptr->push_down(),ptr=ptr->ch[0];
+    while(ptr->ch[0]!=nullptr)
+    {
+        ptr->push_down();
+        ptr=ptr->ch[0];
+    }
     ptr->splay();
     return ptr;
 }
@@ -354,8 +358,8 @@ template<typename _Tp,typename _Func,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRA
 bool
 link_cut_tree<_Tp,_Func,_Alloc>::link(iterator First_iter,iterator Second_iter)
 {
-    Node* first_ptr=First_iter.ptr;
-    Node* second_ptr=Second_iter.ptr;
+    Node *first_ptr=First_iter.ptr;
+    Node *second_ptr=Second_iter.ptr;
     make_root(first_ptr);
     if(find_root(second_ptr)==first_ptr)return false;
     first_ptr->ftr=second_ptr;
@@ -366,10 +370,12 @@ template<typename _Tp,typename _Func,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRA
 bool
 link_cut_tree<_Tp,_Func,_Alloc>::cut(iterator First_iter,iterator Second_iter)
 {
-    Node* first_ptr=First_iter.ptr;
-    Node* second_ptr=Second_iter.ptr;
+    Node *first_ptr=First_iter.ptr;
+    Node *second_ptr=Second_iter.ptr;
     make_root(first_ptr);
-    if(find_root(second_ptr)!=first_ptr||second_ptr->ftr!=first_ptr||second_ptr->ch[0]!=nullptr)
+    if(find_root(second_ptr)!=first_ptr
+        ||second_ptr->ftr!=first_ptr
+        ||second_ptr->ch[0]!=nullptr)
 	{
 		return false;
 	}
@@ -396,7 +402,7 @@ template<typename _Tp,typename _Func,typename _Alloc> REQUIRES_OITL_TYPE_CONSTRA
 bool
 link_cut_tree<_Tp,_Func,_Alloc>::modify(iterator Iterator,_Tp Value)
 {
-    Node* ptr=Iterator.ptr;
+    Node *ptr=Iterator.ptr;
     if(ptr==nullptr)return false;
     ptr->splay();
     ptr->val=Value;
