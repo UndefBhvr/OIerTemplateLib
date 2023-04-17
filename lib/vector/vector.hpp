@@ -49,123 +49,90 @@ namespace oitl
 	public:
 		typedef _Tp value_type;
 		typedef _Tp* pointer;
+		typedef const pointer const_pointer;
 		typedef __gnu_cxx::__normal_iterator<pointer,vector> iterator;
+		typedef __gnu_cxx::__normal_iterator<const_pointer,vector> const_iterator;
 	public:
-//		struct iterator{
-//		private:
-//			_Tp * it;
-//		public:
-//			typedef _Tp value_type;
-//			typedef _Tp& refence;
-//			typedef _Tp* pointer;
-//			typedef ptrdiff_t difference_type;
-//			typedef std::random_access_iterator_tag iterator_category;
-//		public:
-//			iterator(_Tp * const _it):it(_it){}
-//			const iterator &operator++(){
-//				++it;
-//				return (*this);
-//			}
-//			const iterator &operator++(int){
-//				const iterator tmp=(*this);
-//				++it;
-//				return tmp;
-//			}
-//			const iterator &operator--(){
-//				--it;
-//				return (*this);
-//			}
-//			const iterator &operator--(int){
-//				const iterator tmp=(*this);
-//				--it;
-//				return tmp;
-//			}
-//			inline const _Tp &operator*() const{
-//				return *it;
-//			}
-//			inline _Tp &operator*(){
-//				return *it;
-//			}
-//			inline const iterator operator+(const difference_type &_add_num) const{
-//				return iterator(it+_add_num);
-//			}
-//			inline const iterator operator-(const difference_type &_add_num) const{
-//				return iterator(it-_add_num);
-//			}
-//			iterator &operator+=(const difference_type &_add_num){
-//				it+=_add_num;
-//				return (*this);
-//			}
-//			iterator &operator-=(const difference_type &_add_num){
-//				it-=_add_num;
-//				return (*this);
-//			}
-//			inline const bool operator==(const iterator &rhs) const{
-//				return it==rhs.it;
-//			}
-//			inline const bool operator!=(const iterator &rhs) const{
-//				return !((*this)==rhs);
-//			}
-//			inline const bool operator<(const iterator &rhs) const{
-//				return it<rhs.it;
-//			}
-//			inline const bool operator<=(const iterator &rhs) const{
-//				return ((*this)==rhs) || ((*this)<rhs);
-//			}
-//			inline const bool operator>(const iterator &rhs) const{
-//				return it>rhs.it;
-//			}
-//			inline const bool operator>=(const iterator &rhs) const{
-//				return ((*this)==rhs) || ((*this)>rhs);
-//			}
-//			inline const difference_type operator-(const iterator &rhs) const{
-//				return it-rhs.it;
-//			}
-//		};
-	public:
-		vector();
 		vector(const _Tp * _begin,const _Tp * _end);
+		vector(const size_t &_siz=1ULL);
 #if _OITL_LANG_VER>=201103L
 		vector(const std::initializer_list<_Tp> &_vec);
+		vector(const vector<_Tp> &_vec);
 #endif
 		~vector();
 		
 		void push_back(const _Tp &_val);
 		void pop_back();
+		const _Tp &at(const size_t &_pos) const;
+		_Tp &at(const size_t &_pos);
 		
 		const _Tp &operator[](const size_t &_pos) const;
 		_Tp &operator[](const size_t &_pos);
+		const vector<_Tp> &operator=(const vector<_Tp> &_vec);
+		const vector<_Tp> &operator=(vector<_Tp> &&_vec) noexcept;
 
 		inline size_t size() const{
 			return sizes;
 		}
-		inline iterator begin() const{
+		inline iterator begin(){
 			return iterator(_m_array);
 		}
-		inline iterator end() const{
+		inline const_iterator begin() const{
+			return const_iterator(_m_array);
+		}
+		inline iterator end(){
 			return iterator(_m_array+sizes);
 		}
+		inline const_iterator end() const{
+			return const_iterator(_m_array+sizes);
+		}
+		inline const_iterator cbegin() const{
+			return const_iterator(_m_array);
+		}
+		inline const_iterator cend() const{
+			return const_iterator(_m_array+sizes);
+		}
+		void resize(const size_t &len);
 	};
 	
 	template<typename _Tp>
-	vector<_Tp>::vector(){
-		_m_array=new _Tp[1];
+	vector<_Tp>::vector(const size_t &_siz){
+		if(_siz==0){
+			use_len=1;
+		} else{
+			use_len=_siz;
+		}
+		_m_array=new _Tp[use_len];
 		sizes=0;
-		use_len=1;
 	}
 	template<typename _Tp>
 	vector<_Tp>::vector(const _Tp * _begin,const _Tp * _end){
-		sizes=use_len=(_end-_begin);
-		++use_len;
-		_m_array=new _Tp[use_len];
-		for(size_t i=0;_begin!=_end;++_begin,++i){
-			_m_array[i]=*_begin;
+		_m_array=new _Tp[1];
+		sizes=0;
+		use_len=1;
+		while(_begin!=_end){
+			this->push_back(*_begin);
+			++_begin;
 		}
 	}
 #if _OITL_LANG_VER>=201103L
 	template<typename _Tp>
 	vector<_Tp>::vector(const std::initializer_list<_Tp> &_vec){
-		vector(_vec.begin(),_vec.end());
+		_m_array=new _Tp[1];
+		sizes=0;
+		use_len=1;
+		for(typename std::initializer_list<_Tp>::const_iterator it=_vec.begin();it!=_vec.end();++it){
+			this->push_back(*it);
+		}
+	}
+	template<typename _Tp>
+	vector<_Tp>::vector(const vector<_Tp> &_vec){
+		use_len=_vec.use_len;
+		sizes=_vec.sizes;
+		_m_array=new _Tp[use_len];
+		for(size_t i=0;i<sizes;++i){
+			_m_array[i]=_vec._m_array[i];
+		}
 	}
 #endif
 	template<typename _Tp>
@@ -175,10 +142,7 @@ namespace oitl
 	template<typename _Tp>
 	void vector<_Tp>::push_back(const _Tp &_val){
 		if(sizes==use_len){
-			_Tp * tmp=new _Tp[use_len<<=1];
-			memcpy(tmp,_m_array,sizes);
-			delete[] _m_array;
-			_m_array=tmp;
+			resize(use_len<<1);
 		}
 		_m_array[sizes++]=_val;
 	}
@@ -191,12 +155,61 @@ namespace oitl
 		}
 	}
 	template<typename _Tp>
+	const _Tp &vector<_Tp>::at(const size_t &_pos) const{
+		if(_pos<sizes){
+			return (*this)[_pos];
+		} else{
+			throw std::exception(string(__func__)+":不能访问此位置！\n");
+		}
+	}
+	template<typename _Tp>
+	_Tp &vector<_Tp>::at(const size_t &_pos){
+		if(_pos<sizes){
+			return (*this)[_pos];
+		} else{
+			throw std::exception(string(__func__)+":不能访问此位置！\n");
+		}
+	}
+	template<typename _Tp>
 	const _Tp &vector<_Tp>::operator[](const size_t &_pos) const{
 		return _m_array[_pos];
 	}
 	template<typename _Tp>
 	_Tp &vector<_Tp>::operator[](const size_t &_pos){
 		return _m_array[_pos];
+	}
+	template<typename _Tp>
+	const vector<_Tp> &vector<_Tp>::operator=(const vector<_Tp> &_vec){
+		this->~vector();
+		use_len=_vec.use_len;
+		sizes=_vec.sizes;
+		_m_array=new _Tp[use_len];
+		for(size_t i=0;i<sizes;++i){
+			_m_array[i]=_vec._m_array[i];
+		}
+		return (*this);
+	}
+	template<typename _Tp>
+	const vector<_Tp> &vector<_Tp>::operator=(vector<_Tp> &&_vec) noexcept{
+		this->~vector();
+		use_len=_vec.use_len;
+		sizes=_vec.sizes;
+		_m_array=new _Tp[use_len];
+		for(size_t i=0;i<sizes;++i){
+			_m_array[i]=_vec._m_array[i];
+		}
+		_vec.~vector();
+		return (*this);
+	}
+	template<typename _Tp>
+	void vector<_Tp>::resize(const size_t &len){
+		use_len=len;
+		_Tp * tmp=new _Tp[len];
+		for(size_t i=0;i<sizes;++i){
+			tmp[i]=_m_array[i];
+		}
+		delete[] _m_array;
+		_m_array=tmp;
 	}
 #if _OITL_LANG_VER<201103L
 #undef nullptr
