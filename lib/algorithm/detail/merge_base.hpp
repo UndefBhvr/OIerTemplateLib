@@ -5,12 +5,15 @@
 
 namespace oitl {
 	namespace __detail {
+#ifndef _DEFINED_LESS
+#define _DEFINED_LESS
 		template<typename _Tp>
 		struct less{
 			constexpr bool operator()(const _Tp &lhs,const _Tp &rhs) const{
 				return lhs<rhs;
 			}
 		};
+#endif
 		template<typename _RandomAccessIter,typename _Cmp>
 		void inner_merge(_RandomAccessIter BeginIt1,_RandomAccessIter EndIt1,_RandomAccessIter BeginIt2,_RandomAccessIter EndIt2,_RandomAccessIter SaveIt,const _Cmp &cmp){
 			while(BeginIt1!=EndIt1 && BeginIt2!=EndIt2){
