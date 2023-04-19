@@ -40,7 +40,12 @@ namespace oitl
 #endif
 #define nullptr NULL
 #endif
-	
+	template<typename _Tp>
+	void swap(_Tp &x,_Tp &y){
+		_Tp temp=x;
+		x=y;
+		y=temp;
+	}
 	template<typename _Tp>
 	class vector{
 	private:
@@ -49,7 +54,7 @@ namespace oitl
 	public:
 		typedef _Tp value_type;
 		typedef _Tp* pointer;
-		typedef const pointer const_pointer;
+		typedef const _Tp* const_pointer;
 		typedef __gnu_cxx::__normal_iterator<pointer,vector> iterator;
 		typedef __gnu_cxx::__normal_iterator<const_pointer,vector> const_iterator;
 	public:
@@ -57,8 +62,8 @@ namespace oitl
 		vector(const size_t &_siz=1ULL);
 #if _OITL_LANG_VER>=201103L
 		vector(const std::initializer_list<_Tp> &_vec);
-		vector(const vector<_Tp> &_vec);
 #endif
+		vector(const vector<_Tp> &_vec);
 		~vector();
 		
 		void push_back(const _Tp &_val);
@@ -69,10 +74,15 @@ namespace oitl
 		const _Tp &operator[](const size_t &_pos) const;
 		_Tp &operator[](const size_t &_pos);
 		const vector<_Tp> &operator=(const vector<_Tp> &_vec);
+#if _OITL_LANG_VER>=201103L
 		const vector<_Tp> &operator=(vector<_Tp> &&_vec) noexcept;
+#endif
 
 		inline size_t size() const{
 			return sizes;
+		}
+		inline bool empty() const{
+			return size()==0;
 		}
 		inline iterator begin(){
 			return iterator(_m_array);
@@ -92,7 +102,16 @@ namespace oitl
 		inline const_iterator cend() const{
 			return const_iterator(_m_array+sizes);
 		}
+		inline const _Tp &back() const{
+			return _m_array[size()-1];
+		}
+		inline _Tp &back(){
+			return _m_array[size()-1];
+		}
 		void resize(const size_t &len);
+		void insert(const_iterator _pos,const _Tp &_val);
+		void erase(const_iterator _pos);
+		void erase(const_iterator _begin,const_iterator _end);
 	};
 	
 	template<typename _Tp>
@@ -125,6 +144,7 @@ namespace oitl
 			this->push_back(*it);
 		}
 	}
+#endif
 	template<typename _Tp>
 	vector<_Tp>::vector(const vector<_Tp> &_vec){
 		use_len=_vec.use_len;
@@ -134,7 +154,6 @@ namespace oitl
 			_m_array[i]=_vec._m_array[i];
 		}
 	}
-#endif
 	template<typename _Tp>
 	vector<_Tp>::~vector(){
 		delete[] _m_array;
@@ -189,6 +208,7 @@ namespace oitl
 		}
 		return (*this);
 	}
+#if _OITL_LANG_VER>=201103L
 	template<typename _Tp>
 	const vector<_Tp> &vector<_Tp>::operator=(vector<_Tp> &&_vec) noexcept{
 		this->~vector();
@@ -201,6 +221,7 @@ namespace oitl
 		_vec.~vector();
 		return (*this);
 	}
+#endif
 	template<typename _Tp>
 	void vector<_Tp>::resize(const size_t &len){
 		use_len=len;
@@ -210,6 +231,30 @@ namespace oitl
 		}
 		delete[] _m_array;
 		_m_array=tmp;
+	}
+	template<typename _Tp>
+	void vector<_Tp>::insert(const_iterator _pos,const _Tp &_val){
+		push_back(back());
+		for(iterator it=end();it!=_pos;--it){
+			*it=*(it-1);
+		}
+		_m_array[_pos-begin()]=_val;
+	}
+	template<typename _Tp>
+	void vector<_Tp>::erase(const_iterator _pos){
+		for(size_t i=(_pos-begin());i<sizes-1;++i){
+			swap(_m_array[i],_m_array[i+1]);
+		}
+		pop_back();
+	}
+	template<typename _Tp>
+	void vector<_Tp>::erase(const_iterator _begin,const_iterator _end){
+		--_end;
+		while(_end!=_begin){
+			erase(_end);
+			--_end;
+		}
+		erase(_begin);
 	}
 #if _OITL_LANG_VER<201103L
 #undef nullptr
