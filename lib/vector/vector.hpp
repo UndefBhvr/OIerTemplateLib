@@ -108,6 +108,12 @@ namespace oitl
 		inline _Tp &back(){
 			return _m_array[size()-1];
 		}
+		inline size_t capacity() const{
+			return use_len;
+		}
+		inline void shrink_to_fit(){
+			use_len=sizes;
+		}
 		void resize(const size_t &len);
 		void insert(const_iterator _pos,const _Tp &_val);
 		void erase(const_iterator _pos);
@@ -125,9 +131,12 @@ namespace oitl
 	}
 	template<typename _Tp,typename _Alloc>
 	vector<_Tp,_Alloc>::vector(const _Tp * _begin,const _Tp * _end){
-		vector(_end-_begin+1);
+		_m_array=_allocator.allocate(_end-_begin+1);
+		use_len=_end-_begin+1;
+		sizes=0;
 		while(_begin!=_end){
-			push_back(*_begin);
+			_allocator.construct(_m_array+sizes,*_begin);
+			++sizes;
 			++_begin;
 		}
 	}
