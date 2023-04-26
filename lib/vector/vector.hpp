@@ -40,6 +40,12 @@ namespace oitl
 #endif
 #define nullptr NULL
 #endif
+	template<typename _Tp>
+	inline void swap(_Tp &a,_Tp &b){
+		_Tp tmp=a;
+		a=b;
+		b=tmp;
+	}
 	template<typename _Tp,typename _Alloc=std::allocator<_Tp>>
 	class vector;
 	template<typename _Tp,typename _Alloc>
@@ -234,11 +240,10 @@ namespace oitl
 #if _OITL_LANG_VER>=201103L
 	template<typename _Tp,typename _Alloc>
 	const vector<_Tp,_Alloc> &vector<_Tp,_Alloc>::operator=(vector<_Tp,_Alloc> &&_vec) noexcept{
-		_m_array=_vec._m_array;
+		swap(_m_array,_vec._m_array);
 		use_len=_vec.use_len;
 		sizes=_vec.sizes;
 		_allocator=_vec._allocator;
-		_vec._m_array=nullptr;
 		_vec.use_len=0;
 		_vec.sizes=0;
 		return (*this);
